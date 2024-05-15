@@ -12,9 +12,6 @@ public interface Geometry {
      * @return normal to the geometry at the point
      */
     public Vector getNormal(Point point);
-    /**
-     * @param ray
-     * @return list of intersection points of the ray with the geometry
-     */
+
     Vector getNormal();
 }
