@@ -82,7 +82,8 @@ public class Polygon implements Geometry {
    @Override
    public Vector getNormal(Point point)
    {
-      return null;
+      Vector r = new Vector(0,0,1);
+        return r;
    }
 
    @Override
