@@ -12,6 +12,4 @@ public interface Geometry {
      * @return normal to the geometry at the point
      */
     public Vector getNormal(Point point);
-
-    Vector getNormal();
 }

@@ -13,14 +13,16 @@ public class Vector extends Point {
      */
     public Vector(double x, double y, double z) {
         super(x, y, z);
-        try {
             if (x==0 && y==0 && z==0){
                 throw new IllegalArgumentException("Vector cannot be Point(0,0,0)");
             }
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-        }
 
+
+    }
+
+    @Override
+    public String toString(){
+        return "Vector: " + xyz.toString();
     }
 
     /**
@@ -71,8 +73,8 @@ public class Vector extends Point {
      * calculates the dot product of the vector with another vector
      * @param v3 the other vector
      */
-    public int dotProduct(Vector v3) {
-        return (int) (xyz.d1 * v3.xyz.d1 + xyz.d2 * v3.xyz.d2 + xyz.d3 * v3.xyz.d3);
+    public double dotProduct(Vector v3) {
+        return  (xyz.d1 * v3.xyz.d1 + xyz.d2 * v3.xyz.d2 + xyz.d3 * v3.xyz.d3);
     }
 
     /**
@@ -96,5 +98,6 @@ public class Vector extends Point {
         double len = length();
         return new Vector(xyz.d1 / len, xyz.d2 / len, xyz.d3 / len);
     }
+
 
 }

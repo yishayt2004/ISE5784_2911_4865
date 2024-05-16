@@ -1,5 +1,7 @@
 package primitives;
 
+import java.util.Objects;
+
 /**
  * This class will serve all primitive classes based on three numbers
  * @author Dan Zilberstein
@@ -25,13 +27,19 @@ public class Point {
         this.xyz = xyz;
     }
 
+    @Override
+    public String toString() {
+        return "Point: " + xyz.toString();
+    }
+
     /**
     * subtracts the coordinates of the point from the coordinates of another point
      * @param p1 the point to subtract from
      */
 
     public Vector subtract(Point p1) {
-        return new Vector(xyz.d1 - p1.xyz.d1, xyz.d2 - p1.xyz.d2, xyz.d3 - p1.xyz.d3);
+        return new Vector(this.xyz.subtract(p1.xyz));
+        //return new Vector(xyz.d1 - p1.xyz.d1, xyz.d2 - p1.xyz.d2, xyz.d3 - p1.xyz.d3);
     }
 
     /**
@@ -61,6 +69,10 @@ public class Point {
         return  Math.sqrt(distanceSquared(p1));
     }
 
-
-
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Point point)) return false;
+        return Objects.equals(xyz, point.xyz);
+    }
 }
