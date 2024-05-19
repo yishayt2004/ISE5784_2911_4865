@@ -30,7 +30,7 @@ class PointTest {
      */
     @Test
     void testAdd() {
-        // ============ Equivalence Partitions Tests ==============
+        // ============ Equivalence Partitions Tests ===============
         // TC01: test for a positive vector
         assertEquals(new Point(2, 4, 6), new Point(1, 2, 3).add(new Vector(1, 2, 3)), "ERROR: add() for positive vector does not work correctly");
         // TC02: test for a negative vector
