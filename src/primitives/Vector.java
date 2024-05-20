@@ -39,10 +39,13 @@ public class Vector extends Point {
             System.out.println(e.getMessage());
         }
     }
-
+/**
+     * Vector constructor receiving a point
+     * @param xyz point with 3 coordinates
+     */
     public Vector add(Vector v1) {
 
-        return new Vector(xyz.d1 + v1.xyz.d1, xyz.d2 + v1.xyz.d2, xyz.d3 + v1.xyz.d3);
+        return new Vector(xyz.add(v1.xyz));
     }
 
     /**

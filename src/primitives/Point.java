@@ -39,7 +39,6 @@ public class Point {
 
     public Vector subtract(Point p1) {
         return new Vector(this.xyz.subtract(p1.xyz));
-        //return new Vector(xyz.d1 - p1.xyz.d1, xyz.d2 - p1.xyz.d2, xyz.d3 - p1.xyz.d3);
     }
 
     /**
@@ -47,7 +46,7 @@ public class Point {
      * @param v1 the vector to add
      */
     public Point add(Vector v1) {
-        return new Point(xyz.d1 + v1.xyz.d1, xyz.d2 + v1.xyz.d2, xyz.d3 + v1.xyz.d3);
+        return new Point(xyz.add(v1.xyz));
     }
 
     /**

@@ -12,9 +12,11 @@ public class Tube extends RadialGeometry{
 
     /**
      * Tube constructor receiving a radius
+     *
      * @param Ray radius of the tube
+     * @param ray
      */
-    public Tube(double Ray) {
+    public Tube(double Ray, primitives.Ray ray) {
         super(Ray);
         this.Ray = Ray;
     }

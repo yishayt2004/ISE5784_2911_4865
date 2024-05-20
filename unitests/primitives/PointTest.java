@@ -40,6 +40,7 @@ class PointTest {
         // =============== Boundary Values Tests ==================
         // TC04: test for a vector with all coordinates as 0
         assertEquals(new Point(1, 3, 3), new Point(1, 2, 3).add(new Vector(0, 1, 0)), "ERROR: add() for vector with all coordinates as 0 does not work correctly");
+
     }
 
     /**
