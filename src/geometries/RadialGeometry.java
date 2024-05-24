@@ -1,10 +1,16 @@
 package geometries;
 
+import primitives.Point;
+import primitives.Ray;
+import primitives.Vector;
+
+import java.util.List;
+
 /**
  * RadialGeometry class represents the radius of a radial geometry in 3D Cartesian coordinate
  * system
  */
-public class RadialGeometry {
+public class RadialGeometry implements Geometry {
     public double _radius;
 
     /**
@@ -20,5 +26,16 @@ public class RadialGeometry {
      */
     public double getRadius() {
         return _radius;
+    }
+
+
+    @Override
+    public List<Point> findIntersections(Ray ray) {
+        return null;
+    }
+
+    @Override
+    public Vector getNormal(Point point) {
+        return null;
     }
 }
