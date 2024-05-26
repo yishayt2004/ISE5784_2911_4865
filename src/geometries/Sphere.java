@@ -32,6 +32,14 @@ public class Sphere extends RadialGeometry {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
+        Point centerOfSphere = this.center;
+        Vector directionOfRay = r
+
+
+        // calculate the vector of the ray
+
+
+
         return null;
     }
 

@@ -27,6 +27,8 @@ public class Point {
         this.xyz = xyz;
     }
 
+
+
     @Override
     public String toString() {
         return "Point: " + xyz.toString();
