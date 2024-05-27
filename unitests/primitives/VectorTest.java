@@ -64,7 +64,7 @@ class VectorTest {
         // TC01: test for a positive vector
         assertEquals(Math.sqrt(14), new Vector(1, 2, 3).length(), "ERROR: length() for positive vector does not work correctly");
         // TC02: test for a negative vector
-        assertEquals(Math.sqrt(14), new Vector(-1, -2, -3).length(), "ERROR: length() for negative vector does not work correctly");
+        assertEquals(3, new Vector(-1, -2, -2).length(), "ERROR: length() for negative vector does not work correctly");
         // TC03: test for a vector with a zero coordinate
         assertEquals(Math.sqrt(5), new Vector(1, 2, 0).length(), "ERROR: length() for vector with a zero coordinate does not work correctly");
      }

@@ -30,10 +30,27 @@ public class Ray {
         return head.equals(other.head) && direction.equals(other.direction);
     }
 
+    public Vector getDirection() {
+        return direction;
+    }
+
+    public Point getHead() {
+        return head;
+    }
+
+
     @Override
     public String toString() {
         return "Ray:" +
                 "head=" + head +
                 ", direction=" + direction ;
+    }
+
+    public Point getPoint(double t) {
+        try {
+            return head.add(direction.scale(t));
+        } catch (IllegalArgumentException e) {
+            return head;
+        }
     }
 }

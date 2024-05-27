@@ -10,6 +10,7 @@ public class Point {
 
     protected Double3 xyz;
 
+
     public static Point ZERO = new Point(0, 0, 0);
 
     /**
