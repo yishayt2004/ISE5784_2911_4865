@@ -50,7 +50,7 @@ class VectorTest {
         // TC01: test for a positive vector
         assertEquals(14, new Vector(1, 2, 3).lengthSquared(), "ERROR: lengthSquared() for positive vector does not work correctly");
         // TC02: test for a negative vector
-        assertEquals(14, new Vector(-1, -2, -3).lengthSquared(), "ERROR: lengthSquared() for negative vector does not work correctly");
+        assertEquals(50, new Vector(-3, -4, -5).lengthSquared(), "ERROR: lengthSquared() for negative vector does not work correctly");
         // TC03: test for a vector with a zero coordinate
         assertEquals(5, new Vector(1, 2, 0).lengthSquared(), "ERROR: lengthSquared() for vector with a zero coordinate does not work correctly");
      }
@@ -64,7 +64,7 @@ class VectorTest {
         // TC01: test for a positive vector
         assertEquals(Math.sqrt(14), new Vector(1, 2, 3).length(), "ERROR: length() for positive vector does not work correctly");
         // TC02: test for a negative vector
-        assertEquals(Math.sqrt(14), new Vector(-1, -2, -3).length(), "ERROR: length() for negative vector does not work correctly");
+        assertEquals(50, new Vector(-3, -4, -5).lengthSquared(), "ERROR: lengthSquared() for negative vector does not work correctly");
         // TC03: test for a vector with a zero coordinate
         assertEquals(Math.sqrt(5), new Vector(1, 2, 0).length(), "ERROR: length() for vector with a zero coordinate does not work correctly");
      }
@@ -77,13 +77,55 @@ class VectorTest {
     void testDotProduct() {
         // ============ Equivalence Partitions Tests ==============
         // TC01: test for a positive vector
-        assertEquals(20, new Vector(1, 2, 3).dotProduct(new Vector(2, 3, 4)), "ERROR: dotProduct() for positive vector does not work correctly");
+        assertEquals(20, new Vector(1, 2, 3).dotProduct(new Vector(2, 3, 4)),
+                "ERROR: dotProduct() for positive vector does not work correctly");
         // TC02: test for a negative vector
-        assertEquals(-20, new Vector(1, 2, 3).dotProduct(new Vector(-2, -3, -4)), "ERROR: dotProduct() for negative vector does not work correctly");
+        assertEquals(-20, new Vector(1, 2, 3).dotProduct(new Vector(-2, -3, -4)),
+                "ERROR: dotProduct() for negative vector does not work correctly");
         // TC03: test for a vector with a zero coordinate
-        assertEquals(9, new Vector(1, 2, 3).dotProduct(new Vector(0, 0, 3)), "ERROR: dotProduct() for vector with a zero coordinate does not work correctly");
+        assertEquals(9, new Vector(1, 2, 3).dotProduct(new Vector(0, 0, 3)),
+                "ERROR: dotProduct() for vector with a zero coordinate does not work correctly");
         // =============== Boundary Values Tests ==================
         // TC04: test for a vector with all coordinates as 0
-        assertEquals(0, new Vector(0, 2, 0).dotProduct(new Vector(1, 0, 2)), "ERROR: dotProduct() for vector with all coordinates as 0 does not work correctly");
+        assertEquals(0, new Vector(0, 2, 0).dotProduct(new Vector(1, 0, 2)),
+                "ERROR: dotProduct() for vector with all coordinates as 0 does not work correctly");
+    }
+
+    @Test
+    void testCrossProduct() {
+        Vector v123 = new Vector(1, 2, 3);
+        // ============ Equivalence Partitions Tests ==============
+        // TC01: test for a positive vector
+        assertEquals(new Vector(-4, 8, -4), v123.crossProduct(new Vector(3, 2, 1)),
+                "ERROR: crossProduct() for positive vector does not work correctly");
+        // TC02: test for a negative vector
+        assertEquals(new Vector(4, -8, 4), v123.crossProduct(new Vector(-3, -2, -1)),
+                "ERROR: crossProduct() for negative vector does not work correctly");
+        // TC03: test for a vector with a zero coordinate
+        assertEquals(new Vector(6, -3, 0), v123.crossProduct(new Vector(0, 0, 3)),
+                "ERROR: crossProduct() for vector with a zero coordinate does not work correctly");
+        // =============== Boundary Values Tests ==================
+        // TC04: test for a vector with all coordinates as 0
+        assertEquals(new Vector(4, 0, -2), new Vector(0, 2, 0).crossProduct(new Vector(1, 0, 2)),
+                "ERROR: crossProduct() for vector with all coordinates as 0 does not work correctly");
+    }
+
+
+    @Test
+    void testNormalize() {
+        // ============ Equivalence Partitions Tests ==============
+        // TC01: test for a positive vector
+        assertEquals(new Vector(1, 0, 0), new Vector(2, 0, 0).normalize(),
+                "ERROR: normalize() for positive vector does not work correctly");
+        // TC02: test for a negative vector
+        assertEquals(new Vector(-1, 0, 0), new Vector(-2, 0, 0).normalize(),
+                "ERROR: normalize() for negative vector does not work correctly");
+        // TC03: test for a vector with a zero coordinate
+        assertEquals(new Vector(0, 0, 1), new Vector(0, 0, 3).normalize(),
+                "ERROR: normalize() for vector with a zero coordinate does not work correctly");
+        // =============== Boundary Values Tests ==================
+        // TC04: test for a vector with all coordinates as 0
+        assertThrows(IllegalArgumentException.class, () -> new Vector(0, 0, 0).normalize(),
+                "ERROR: normalize() for vector with all coordinates as 0 does not work correctly");
     }
 }

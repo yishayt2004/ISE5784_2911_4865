@@ -20,8 +20,8 @@ public class Tube extends RadialGeometry{
         super(Ray);
         this.Ray = Ray;
     }
-
-    Vector getNormal(Point p) {
+    @Override
+    public Vector getNormal(Point p) {
         return null;
     }
 }
