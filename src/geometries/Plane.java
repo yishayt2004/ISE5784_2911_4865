@@ -49,7 +49,18 @@ public class Plane implements Geometry {
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        return null;
+    public List<Point> findIntersections(Ray ray)
+    {
+
+        Vector p0Q = q.subtract(ray.getPoint(0));
+        double nv = normal.dotProduct(ray.getDirection());
+        if (nv == 0) {
+            return null;// ray is parallel to the plane
+        }
+        double t = normal.dotProduct(p0Q) / nv;
+        if (t <= 0) {
+            return null;
+        }
+        return List.of(ray.getPoint(t));
     }
 }

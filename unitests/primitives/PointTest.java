@@ -15,14 +15,20 @@ class PointTest {
     void testSubtract() {
         // ============ Equivalence Partitions Tests ==============
         // TC01: test for a positive vector
-        assertEquals(new Vector(1, 2, 3), new Point(2, 4, 6).subtract(new Point(1, 2, 3)), "ERROR: subtract() for positive vector does not work correctly");
+        Point p246 = new Point(2, 4, 6);
+        Point p123 = new Point(1, 2, 3);
+        assertEquals(new Vector(1, 2, 3),
+                p246.subtract(p123),
+                "ERROR: subtract() for positive vector does not work correctly");
         // TC02: test for a negative vector
-        assertEquals(new Vector(-1, -2, -3), new Point(1, 2, 3).subtract(new Point(2, 4, 6)), "ERROR: subtract() for negative vector does not work correctly");
+        assertEquals(new Vector(-1, -2, -3),
+                p123.subtract(p246),
+                "ERROR: subtract() for negative vector does not work correctly");
         // TC03: test for a vector with a zero coordinate
-        assertEquals(new Vector(1, 2, 3), new Point(1, 2, 3).subtract(new Point(0, 0, 0)), "ERROR: subtract() for vector with a zero coordinate does not work correctly");
+        assertEquals(new Vector(1, 2, 3), p123.subtract(new Point(0, 0, 0)), "ERROR: subtract() for vector with a zero coordinate does not work correctly");
         // =============== Boundary Values Tests ==================
         // TC04: test for a vector with all coordinates as 0
-        assertEquals(new Vector(1, 2, 3), new Point(1, 2, 3).subtract(new Point(0, 0, 0)), "ERROR: subtract() for vector with all coordinates as 0 does not work correctly");
+        assertEquals(new Vector(1, 2, 3), p123.subtract(new Point(0, 0, 0)), "ERROR: subtract() for vector with all coordinates as 0 does not work correctly");
     }
 
     /**
@@ -58,6 +64,7 @@ class PointTest {
         // TC03: test for a vector with a zero coordinate
         assertEquals(14, new Point(1, 2, 0).distanceSquared(new Point(0, 0, 3)),
                 "ERROR: distanceSquared() for vector with a zero coordinate does not work correctly");
+        assertEquals(9, new Point(1, 2, 0).distanceSquared(new Point(0, 0, 2)), "ERROR: distanceSquared() for vector with a zero coordinate does not work correctly");
         // =============== Boundary Values Tests ==================
         // TC04: test for a vector with all coordinates as 0
         assertEquals(14, new Point(1, 2, 3).distanceSquared(new Point(0, 0, 0)),

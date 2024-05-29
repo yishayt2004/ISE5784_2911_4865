@@ -1,6 +1,7 @@
 package geometries;
 
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
 /**
  * Tube class represents a tube in 3D Cartesian coordinate
@@ -8,20 +9,21 @@ import primitives.Vector;
  */
 public class Tube extends RadialGeometry{
 
-   protected double Ray;
-
+    protected Ray axis;
     /**
      * Tube constructor receiving a radius
      *
-     * @param Ray radius of the tube
      * @param ray
      */
-    public Tube(double Ray, primitives.Ray ray) {
-        super(Ray);
-        this.Ray = Ray;
+    public Tube(double radius, Ray ray) {
+        super(radius);
+        axis = ray;
     }
-    @Override
+
     public Vector getNormal(Point p) {
-        return null;
+
+            // projection of P-O on the ray:
+            double t = p.subtract(axis.getHead()).dotProduct(axis.getDirection());
+            return  p.subtract(axis.getPoint(t)).normalize();
     }
 }

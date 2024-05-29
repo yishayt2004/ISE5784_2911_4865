@@ -28,14 +28,13 @@ public class RadialGeometry implements Geometry {
         return _radius;
     }
 
-
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public Vector getNormal(Point point) {
         return null;
     }
 
     @Override
-    public Vector getNormal(Point point) {
-        return null;
+    public List<Point> findIntersections(Ray ray) {
+        return List.of();
     }
 }
