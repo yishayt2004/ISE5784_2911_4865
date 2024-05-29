@@ -33,7 +33,7 @@ public class Sphere extends RadialGeometry {
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray)
+    public List<Point> findIntersections(Ray ray)//ray to sphere intersection
     {
         List<Point> intersections = null;
         Point  o = center ;

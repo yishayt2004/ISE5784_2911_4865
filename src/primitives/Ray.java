@@ -48,7 +48,8 @@ public class Ray {
 
     public Point getPoint(double t) {
         try {
-            return head.add(direction.scale(t));
+             Point a = head.add(direction.scale(t));
+         return a;
         } catch (IllegalArgumentException e) {
             return head;
         }
