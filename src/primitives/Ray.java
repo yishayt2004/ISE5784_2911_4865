@@ -18,6 +18,8 @@ public class Ray {
         this.direction = direction.normalize();
     }
 
+
+
     /**
      * this function checks if the ray is equal to another ray
      * @param obj the other ray

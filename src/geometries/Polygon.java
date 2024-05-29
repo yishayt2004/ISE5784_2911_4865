@@ -4,6 +4,7 @@ import java.util.*;
 
 import static primitives.Util.isZero;
 
+import geometries.Geometry;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Util;
@@ -87,6 +88,6 @@ public class Polygon implements Geometry {
 
    @Override
    public List<Point> findIntersections(Ray ray) {
-      return List.of();
+      return null;
    }
 }
