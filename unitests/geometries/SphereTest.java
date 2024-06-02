@@ -36,7 +36,5 @@ class SphereTest {
         assertTrue(intersectionsTC03.contains(new Point(2, 0, 0)), "Intersection point not found");
         // TC04: Ray starts after the sphere (0 points)
         assertNull(sphere.findIntersections(new Ray(new Point(3, 0, 0), new Vector(1, 0, 0))), "Ray's line out of sphere");
-
-
     }
 }

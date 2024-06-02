@@ -11,6 +11,10 @@ public class Geometries implements Intersectable{
 
     public Geometries(){}
 
+    public List<Intersectable> getGeomtreyList() {
+        return geomtreyList;
+    }
+
     public Geometries(Intersectable... geometries){
         add(geometries);
     }
@@ -21,8 +25,24 @@ public class Geometries implements Intersectable{
         }
     }
 
+
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        return null;
+    public List<Point> findIntersections(Ray ray)
+    {
+        if (ray == null) return null; // Handle null ray
+        List<Point> intersections = new LinkedList<>();
+        for (Intersectable geometry : geomtreyList) { // Iterate over all geometries
+            List<Point> geometryIntersections = geometry.findIntersections(ray); // Find intersections with current geometry
+            if (geometryIntersections != null)
+            { // If there are intersections
+                intersections.addAll(geometryIntersections); // Add them to the list
+            }
+        }
+        if (intersections.isEmpty()) return null; // If there are no intersections
+        return intersections; // Return the list of intersections
+
     }
+
+
+
 }
