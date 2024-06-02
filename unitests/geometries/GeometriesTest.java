@@ -61,8 +61,6 @@ class GeometriesTest {
         assertEquals(2, result3.size(), "Wrong number of points");
         // TC04: just one intersect
 
-
-
         List<Point> result4 = g.findIntersections(new Ray(new Point(0, 0, 0), new Vector(0, 1, 0)));
 
         assertEquals(1, result4.size(), "Wrong number of points");

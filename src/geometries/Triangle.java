@@ -27,7 +27,6 @@ public class Triangle extends Polygon {
         double t2= n2.dotProduct(ray.getDirection());
         double t3= n3.dotProduct(ray.getDirection());
 
-
        if(t1==0 ||t2==0 || t3==0)//ray is parallel to the triangle
             return null;
 

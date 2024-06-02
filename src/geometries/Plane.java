@@ -57,7 +57,7 @@ public class Plane implements Geometry {
         if (nv == 0) {
             return null;// ray is parallel to the plane
         }
-        double t = normal.dotProduct(p0Q) / nv;
+        double t = (normal.dotProduct(p0Q) / nv);
         if (t <= 0) {
             return null;
         }

@@ -39,10 +39,13 @@ public class Sphere extends RadialGeometry {
         Point P0= ray.getPoint(0); // the start point of the ray
 
         Vector u = o.subtract(P0);// the vector from the start point of the ray to the center of the sphere
+        if(ray.getHead().equals(center))// the start point of the ray is the center of the sphere
+        {return List.of(ray.getHead().add(ray.getDirection().scale(_radius)));}
+
         double t= u.dotProduct(ray.getDirection());
         double d = (double) Math.sqrt(u.lengthSquared()-t*t);// the distance between the center of the sphere and the ray
         double distance=  (double) Math.sqrt(this.getRadius()*this.getRadius()-d*d);
-        if(d>=this._radius )
+        if(d>=this._radius)
             return null;
 
         double t1 = t-distance;// the distance between the start point of the ray and the first intersection point
