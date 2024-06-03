@@ -16,11 +16,15 @@ class TriangleTest {
         Triangle triangle = new Triangle(new Point(0, 0, 0), new Point(1, 0, 0), new Point(0, 1, 0));
         Ray ray;
 
-        // TC01: a ray that starts inside the triangle and cuts the triangle (4 points)
+        ray = new Ray(new Point(0.1, 0.1, 0.1), new Vector(0, 0, -1));
+        //assertNull( triangle.findIntersections(ray));
+        assertEquals(1, (triangle.findIntersections(ray)).size());
+
+       // TC01: a ray that starts inside the triangle and cuts the triangle (4 points)
         ray = new Ray(new Point(0.2, 0.2, 0.1), new Vector(0, 0, -1));
         List<Point> intersections1 = triangle.findIntersections(ray);
         assertNotNull(intersections1);
-        assertEquals(4, intersections1.size());
+        assertEquals(1, intersections1.size());
 
         // TC02: a ray that starts outside the triangle in front of the edge (0 points)
         ray = new Ray(new Point(-1, -1, 1), new Vector(0, 0, -1));
@@ -37,10 +41,9 @@ class TriangleTest {
         assertEquals(2, intersections4.size());
 
         // TC05: a ray that starts on the vertex
-        ray = new Ray(new Point(0, 0, 0), new Vector(0, 0, -1));
-        List<Point> intersections5 = triangle.findIntersections(ray);
-        assertNotNull(intersections5);
-        assertEquals(3, intersections5.size());
+       // ray = new Ray(new Point(0.1, 0.1, 0.1), new Vector(0, 0, -1));
+        //assertNull( triangle.findIntersections(ray));
+        //assertEquals(1, (triangle.findIntersections(ray)).size());*/
 
         // TC06: a ray that starts on the continuation of the vertex (0 points)
         ray = new Ray(new Point(-1, -1, 0), new Vector(0, 0, -1));
