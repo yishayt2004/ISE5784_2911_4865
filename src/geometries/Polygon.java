@@ -2,7 +2,7 @@ package geometries;
 
 import java.util.*;
 
-import static primitives.Util.isZero;
+import static primitives.Util.*;
 
 import geometries.Geometry;
 import primitives.Point;
@@ -113,4 +113,3 @@ public class Polygon implements Geometry
       }
    }
 
-}

@@ -4,7 +4,10 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.Collections;
 import java.util.List;
+
+import static primitives.Util.*;
 
 /**
  * Class Plane is the basic class representing a plane in the 3D space
@@ -48,19 +51,21 @@ public class Plane implements Geometry {
         return normal;
     }
 
-    @Override
-    public List<Point> findIntersections(Ray ray)//ray to plane intersection
-    {
+    /**
+     * Getter for the normal to the plane
+     * @return the point on the plane
+     */
+@Override
+public List<Point> findIntersections(Ray ray)
+{
+    Vector direction = ray.getDirection();
+    Point p0 = ray.getPoint(0);
+    // if the ray is parallel to the plane
+    if((isZero(normal.dotProduct(direction))) || q.equals(p0))
+        return null;
+    // if the ray starts in the plane
+    double t = normal.dotProduct(q.subtract(p0)) / normal.dotProduct(direction);
+    return alignZero(t) > 0 ? null : List.of(p0.add(direction.scale(t)));
+}
 
-        Vector p0Q = q.subtract(ray.getPoint(0));
-        double nv = normal.dotProduct(ray.getDirection());//dot product of the normal and the ray direction
-        if (nv == 0) {
-            return null;// ray is parallel to the plane
-        }
-        double t = (normal.dotProduct(p0Q) / nv);
-        if (t <= 0) {
-            return null;
-        }
-        return List.of(ray.getPoint(t));//ray intersects the plane
-    }
 }

@@ -54,8 +54,8 @@ class GeometriesTest {
         assertEquals(2, result.size(), "Wrong number of points");
         //=============boundary values tests================
         // TC02: No one intersect
-//        List<Point> result2 = g.findIntersections(new Ray(new Point(0, 0, 0), new Vector(-1, -1, -1)));
-//        assertNull(result2, "Wrong number of points");
+        List<Point> result2 = g.findIntersections(new Ray(new Point(0, 0, 0), new Vector(-1, -1, -1)));
+        assertNull(result2, "Wrong number of points");
         // TC03: All intersect
         List<Point> result3 = g.findIntersections(new Ray(new Point(0, 0, 0), new Vector(1, 0, 0)));
         assertEquals(2, result3.size(), "Wrong number of points");
