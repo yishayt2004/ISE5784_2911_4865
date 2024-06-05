@@ -32,7 +32,8 @@ class GeometriesTest {
     }
 
     @Test
-    void testFindIntersections() {
+    void testFindIntersections()
+    {
         Geometries g = new Geometries(new Sphere(2, new Point(0, 0, 0)),
                 new Plane(
                         new Point(0, 0, -3),
@@ -41,28 +42,29 @@ class GeometriesTest {
                 new Triangle(
                         new Point(3, 0, 0),
                         new Point(0, 3, 0),
-                        new Point(2, 2, 3)));
-//                new Polygon(
-//                        new Point(-4, 0, -1),
-//                        new Point(0, -4, 0),
-//                        new Point(0, -4, 3),
-//                        new Point(-4, 0, 2)));
+                        new Point(2, 2, 3)),
+                new Polygon(
+                        new Point(-4, 0, -1),
+                        new Point(0, -4, 0),
+                        new Point(0, -4, 3),
+                        new Point(-4, 0, 2)));
+
 
         // ============ Equivalence Partitions Tests ==============
         // TC01: couple of geometries
-        List<Point> result = g.findIntersections(new Ray(new Point(0, 0, 0), new Vector(1, 1, 1)));
-        assertEquals(2, result.size(), "Wrong number of points");
-        //=============boundary values tests================
-        // TC02: No one intersect
-        List<Point> result2 = g.findIntersections(new Ray(new Point(0, 0, 0), new Vector(-1, -1, -1)));
-        assertNull(result2, "Wrong number of points");
-        // TC03: All intersect
-        List<Point> result3 = g.findIntersections(new Ray(new Point(0, 0, 0), new Vector(1, 0, 0)));
-        assertEquals(2, result3.size(), "Wrong number of points");
-        // TC04: just one intersect
+        List<Point> result01 = g.findIntersections(new Ray(new Point(1, 1, 1), new Vector(-1, -1, -2)));
+        assertEquals(2, result01.size(), "couple of geometries 01");
+        // =============== Boundary Values Tests ==================
+        // TC11: No one intersect
+        assertNull(g.findIntersections(new Ray(new Point(0, 0, 4), new Vector(1, 1, 1))), "No one intersect 11");
 
-        List<Point> result4 = g.findIntersections(new Ray(new Point(0, 0, 0), new Vector(0, 1, 0)));
+        // TC12: just one intersect
+        List<Point> result12 = g.findIntersections(new Ray(new Point(0, 0, -4), new Vector(1, 1, 1)));
+        assertEquals(1, result12.size(), "just one intersect 12");
 
-        assertEquals(1, result4.size(), "Wrong number of points");
+        // TC13: every element intersect
+        List<Point> result13 = g.findIntersections(new Ray(new Point(-5, -5, 3), new Vector(1, 1, -0.3)));
+        assertEquals(5, result13.size(), "all of them intersect");
 
-}}
+
+    }}

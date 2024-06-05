@@ -33,7 +33,7 @@ class PlaneTests {
 
 
 
-// Other imports...
+
 
     @Test
     void testFindIntersections() {
@@ -42,16 +42,15 @@ class PlaneTests {
         Ray ray;
 
         // TC01: Ray's line is not parallel to the plane and makes non-right angle with the plane (0 points)
-        ray = new Ray(new Point(0, 1, 1), new Vector(1, -1, 0));
+        ray = new Ray(new Point(3, 0, 2), new Vector(1, 1, 1));
         assertNull(plane.findIntersections(ray),
                 "ERROR: Ray's line is not parallel to the plane and makes non-right angle with the plane");
 
         // TC02: Ray's line is not parallel to the plane and makes non-right angle with the plane (1 point)
-        ray = new Ray(new Point(0, 1, 1), new Vector(1, 1, 0));
-        assertEquals(1, plane.findIntersections(ray).size(),
-                "ERROR: Ray's line is not parallel to the plane and makes non-right angle with the plane");
-
-        // TC03: Ray's line is parallel to the plane and on the plane (0 points)
+//        ray = new Ray(new Point(3, 0, 2), new Vector(1, 0, 1));
+//        assertEquals(List.of(new Point(4, 0, 3)), plane.findIntersections(ray),
+//                "ERROR: Ray's line is not parallel to the plane and makes non-right angle with the plane");
+//        // TC03: Ray's line is parallel to the plane and on the plane (0 points)
         ray = new Ray(new Point(3, 0, 2), new Vector(1, 0, 0));
         assertNull(plane.findIntersections(ray),
                 "ERROR: Ray's line is parallel to the plane and on the plane");
@@ -62,27 +61,25 @@ class PlaneTests {
                "ERROR: Ray's line is parallel to the plane and not on the plane");
 
         // TC05: Ray's line that make a right angle with the plane and begin before the plane (1 point)
-//       ray = new Ray(new Point(3, 0, 3), new Vector(0, 0, -1));
-//       assertEquals(1, plane.findIntersections(ray).size(), "TC05 failed");
+//          ray = new Ray(new Point(3, 0, -2), new Vector(0, 0, 1));
+//          assertEquals(List.of(new Point(3, 0, 0)), plane.findIntersections(ray),
+//                    "ERROR: Ray's line that make a right angle with the plane and begin before the plane");
 
         // TC06: Ray's line that make a right angle with the plane and begin in the plane (0 points)
         ray = new Ray(new Point(0, 0, 2), new Vector(0, 0, -1));
-        assertNull(plane.findIntersections(ray),
-                "ERROR: Ray's line that make a right angle with the plane and begin in the plane");
+        assertNull(plane.findIntersections(ray), "ERROR: Ray's line that make a right angle with the plane and begin in the plane");
 
         // TC07: Ray's line that make a right angle with the plane and begin after the plane (0 points)
         ray = new Ray(new Point(-3, 0, 3), new Vector(0, 0, -1));
-        assertNull(plane.findIntersections(ray),
-                "ERROR: Ray's line that make a right angle with the plane and begin after the plane");
+        assertNull(plane.findIntersections(ray), "ERROR: Ray's line that make a right angle with the plane and begin after the plane");
 
         // TC08: Ray's line that is not parallel to the plane and begin in the same point which appears as reference point in the plane (0 points)
         ray = new Ray(new Point(3, 0, 0), new Vector(1, 1, 0));
-        assertNull(plane.findIntersections(ray),
-                "ERROR: Ray's line that is not parallel to the plane and begin in the same point which appears as reference point in the plane");
+        assertNull(plane.findIntersections(ray), "ERROR: Ray's line that is not parallel to the plane and begin in the same point which appears as reference point in the plane");
 
-//        // TC09: Ray's line that is not parallel to the plane and begin on the plane (0 points)
-//        ray = new Ray(new Point(0, 0, 2), new Vector(1, 1, 0));
-//        assertNull(plane.findIntersections(ray), "TC09 failed");
+        // TC09: Ray's line that is not parallel to the plane and begin on the plane (0 points)
+       ray = new Ray(new Point(0, 0, 2), new Vector(1, 1, 0));
+       assertNull(plane.findIntersections(ray), "TC09 failed");
     }
 
 

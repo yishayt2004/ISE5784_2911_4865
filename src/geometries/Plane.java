@@ -58,18 +58,17 @@ public class Plane implements Geometry {
 @Override
 public List<Point> findIntersections(Ray ray)
 {
-    // according to: t = (n* (p - p0)) / n * v
-    Vector numerator = q.subtract(ray.getHead()); // vector from the head of the ray to the reference point of the plane
-    double denominator = normal.dotProduct(ray.getDirection()); // the dot product of the normal and the direction of the ray
-
-    if(isZero(denominator)) // if the direction parallel to the plane's normal
+    Vector direction = ray.getDirection();
+    Point p0 = ray.getPoint(0);
+    if ((isZero(direction.dotProduct(normal)) || q.equals(p0))) {
         return null;
+    }
+    double t = normal.dotProduct(q.subtract(p0)) / normal.dotProduct(direction);
+    return alignZero(t) <= 0 ? null : List.of(p0.add(direction.scale(t)));
 
-    double t = alignZero(normal.dotProduct(numerator) / denominator); // the distance
-    if(t < 0 || isZero(t))
-        return null;
 
-    return List.of(ray.getPoint(t)); // return the intersection point
+
+
 }
 
 }
