@@ -88,28 +88,41 @@ public class Polygon implements Geometry
 
 
    @Override
-   public List<Point> findIntersections(Ray ray)//ray to polygon intersection
-      {
-      Vector[] vectors = new Vector[vertices.size()];
-      Vector [] dotProductVectors = new Vector[vertices.size()];
+   public List<Point> findIntersections(Ray ray) {
+      // Initialize a list to hold the normals of the edges of the polygonal base
+      List<Vector> normals = new ArrayList<>(size);
 
-      for (int i = 0; i < vectors.length; i++)
-      {
-         vectors[i] = this.vertices.get(i).subtract(ray.getPoint(0));
+      // Get the starting point and direction of the ray
+      final Point startPoint = ray.getPoint(0);
+      final Vector dir = ray.getDirection();
+
+      // Calculate the normal vector for each edge of the polygonal base
+      Vector v1 = vertices.getFirst().subtract(startPoint);
+      for (Point p : vertices.subList(1, size)) {
+         Vector v2 = p.subtract(startPoint);
+         normals.add(v1.crossProduct(v2).normalize());
+         v1 = v2;
+      }
+      // Add the normal for the edge connecting the last vertex to the first vertex
+      normals.add(vertices.getLast().subtract(startPoint).crossProduct(vertices.getFirst().subtract(startPoint)).normalize());
+
+      // Determine if the ray direction is consistently on one side of all the polygon's edges
+      boolean allPositive = dir.dotProduct(normals.getFirst()) > 0;
+      for (Vector normal : normals) {
+         double s = dir.dotProduct(normal);
+         // If the dot product is zero or if it changes sign, the ray does not intersect the polygon's base
+         if (Util.isZero(s) || (s > 0 != allPositive)) {
+            return null;
+         }
       }
 
-      for (int i = 0; i < vectors.length; i++)
-      {
-         dotProductVectors[i] = vectors[i].crossProduct(vectors[(i + 1) % vectors.length]);
-      }
+      // Create a plane defined by the first three vertices of the polygon
+      Plane plane = new Plane(vertices.getFirst(), vertices.get(1), vertices.get(2));
 
-      for(int i = 0; i < vectors.length; i++)
-      {
-         if(alignZero(ray.getDirection().dotProduct(dotProductVectors[i])) <= 0) // if the ray is parallel to the polygon
-                   return null;
-      }
-
-      return new Plane(vertices.get(0), vertices.get(1), vertices.get(2)).findIntersections(ray);
-      }
+      // Find and return the intersection points of the ray with the plane
+      return plane.findIntersections(ray);
    }
+
+}
+
 

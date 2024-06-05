@@ -7,10 +7,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Geometries implements Intersectable{
+
     private final List<Intersectable> geomtreyList = new LinkedList<Intersectable>();
 
     public Geometries(){}
-
+    // ***************** Getters ********************** //
     public List<Intersectable> getGeomtreyList() {
         return geomtreyList;
     }
@@ -18,14 +19,14 @@ public class Geometries implements Intersectable{
     public Geometries(Intersectable... geometries){
         add(geometries);
     }
-
+    // ***************** Operations ******************** //
     public void add(Intersectable... geometries){
         for (Intersectable geometry : geometries) {
             geomtreyList.add(geometry);
         }
     }
 
-
+    // ***************** Operations ******************** //
     @Override
     public List<Point> findIntersections(Ray ray)
     {

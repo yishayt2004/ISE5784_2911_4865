@@ -34,11 +34,6 @@ class TriangleTest {
         ray = new Ray(new Point(-1, -1, 0), new Vector(0, 0, -1));
         assertNull(triangle.findIntersections(ray));
 
-        // TC04: a ray that starts on the edge
-       // ray = new Ray(new Point(0.5, 0, 0), new Vector(0, 0, -1));
-       // List<Point> intersections4 = triangle.findIntersections(ray);
-      //  assertNotNull(intersections4);
-      //  assertEquals(1, (intersections4).size());
 
         // TC06: a ray that starts on the continuation of the vertex (0 points)
 
