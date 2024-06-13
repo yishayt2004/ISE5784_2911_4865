@@ -11,21 +11,21 @@ import java.util.List;
  * system
  */
 public class RadialGeometry implements Geometry {
-    public double _radius;
+    public double radius;
 
     /**
      * RadialGeometry constructor receiving a radius
      * @param radius radius of the radial geometry
      */
     public RadialGeometry(double radius) {
-        _radius = radius;
+        this.radius = radius;
     }
 
     /**
      * @return the radius of the radial geometry
      */
     public double getRadius() {
-        return _radius;
+        return radius;
     }
 
     @Override

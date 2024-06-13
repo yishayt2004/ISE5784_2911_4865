@@ -6,6 +6,8 @@ import primitives.Vector;
 
 import java.util.List;
 
+import static primitives.Util.isZero;
+
 public class Triangle extends Polygon {
     public Triangle(Point p1, Point p2, Point p3)
     {
@@ -15,6 +17,10 @@ public class Triangle extends Polygon {
     @Override
     public List<Point> findIntersections(Ray ray)//ray to triangle intersection
     {
+        List<Point> intersection =  plane.findIntersections(ray);//ray to plane intersection
+        if (intersection == null)//ray is parallel to the triangle
+            return null;
+
         Vector v1= vertices.get(0).subtract(ray.getPoint(0));//p0 to p1 vector
         Vector v2= vertices.get(1).subtract(ray.getPoint(0));//p0 to p2 vector
         Vector v3= vertices.get(2).subtract(ray.getPoint(0));//p0 to p3 vector
@@ -27,11 +33,11 @@ public class Triangle extends Polygon {
         double t2= n2.dotProduct(ray.getDirection());
         double t3= n3.dotProduct(ray.getDirection());
 
-       if(t1==0 ||t2==0 || t3==0)//ray is parallel to the triangle
+       if(isZero(t1) || isZero(t2) || isZero(t3))//ray is parallel to the triangle
             return null;
 
        if(t1>0 && t2>0 && t3>0 || t1<0 && t2<0 && t3<0 )//ray is parallel to the triangle
-            return plane.findIntersections(ray);
+            return intersection;
 
        return null;
     }

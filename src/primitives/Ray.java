@@ -16,10 +16,6 @@ public class Ray
      */
     public Ray(Point point, Vector direction)
     {
-        if(point==null || direction==null)
-        {
-            throw new IllegalArgumentException("point and direction cannot be null");
-        }
         this.head = point;
         this.direction = direction.normalize();
     }

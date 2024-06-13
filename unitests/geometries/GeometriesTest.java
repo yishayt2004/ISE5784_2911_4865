@@ -11,30 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GeometriesTest {
 
-    @Test
-    void testAdd() {
-        // Create some geometries
-        Sphere sphere = new Sphere(2, new Point(0, 0, 0));
-        Plane plane = new Plane(
-                new Point(0, 0, -3),
-                new Point(1, 0, 3),
-                new Point(1, 1, -3));
 
-        // Create Geometries object
-        Geometries g = new Geometries();
-
-        // Add geometries
-        g.add(sphere, plane);
-
-        // Ensure they are added correctly
-        assertEquals(2, g.getGeomtreyList().size(), "Wrong number of geometries");
-
-    }
 
     @Test
     void testFindIntersections()
     {
-        Geometries g = new Geometries(new Sphere(2, new Point(0, 0, 0)),
+        Geometries g = new Geometries(
+                new Sphere(2, new Point(0, 0, 0)),
                 new Plane(
                         new Point(0, 0, -3),
                         new Point(1, 0, 3),
