@@ -1,12 +1,12 @@
 package renderer;
 
+import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
 import java.util.MissingResourceException;
 
-import static jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyle.exceptions;
 import static primitives.Util.isZero;
 
 public class Camera implements Cloneable {
@@ -18,6 +18,9 @@ public class Camera implements Cloneable {
     double width;
     double height;
 
+    ImageWriter imageWriter;
+    RayTracerBase rayTracer;
+
     private Camera() {
         p0 = null;
         vUp = null;
@@ -27,6 +30,8 @@ public class Camera implements Cloneable {
         width = 0;
         height = 0;
     }
+
+
 
 
     /**
@@ -53,10 +58,36 @@ public class Camera implements Cloneable {
         return new Ray(p0, p.subtract(p0)); // return Ray from the camera to the pixel
     }
 
+    /**
+     * this func will loop over all the pixels in the view plane and will calculate the color of each pixel
+     * @return the camera object
+     */
+    public Camera renderImage(){
+        int nX = imageWriter.getNx();
+        int nY = imageWriter.getNy();
+        for (int i = 0; i < nY; i++) {
+            for (int j = 0; j < nX; j++) {
+                Ray ray = constructorRay(nX, nY, j, i);
+                Color color = rayTracer.traceRay(ray);
+                imageWriter.writePixel(j, i, color);
+            }
+        }
+        return this;
+    }
     public static Builder getBuilder() {
         return new Builder();
     }
 
+    public Camera printGrid(int interval, Color color){
+        for (int i = 0; i < imageWriter.getNx(); i++) {
+            for (int j = 0; j < imageWriter.getNy(); j++) {
+                if (i % interval == 0 || j % interval == 0) {
+                    imageWriter.writePixel(i, j, color);
+                }
+            }
+        }
+        return this;
+    }
     // Getters
     public Point getP0() {return p0;}
     public Vector getvUp() {return vUp;}
@@ -67,6 +98,10 @@ public class Camera implements Cloneable {
     public double getHeight() {return height;}
 
 
+    public Camera writeToImage() {
+        imageWriter.writeToImage();
+        return this;
+    }
 
     public static class Builder {
         // Builder fields
@@ -134,8 +169,6 @@ public class Camera implements Cloneable {
         }
 
         /**
-         * Builds and returns a Camera object.
-         *
          * This method checks if all necessary fields of the camera have been set.
          * If a field is missing or invalid, it throws an exception.
          * If all fields are valid, it returns a clone of the camera.
@@ -146,7 +179,7 @@ public class Camera implements Cloneable {
          * @throws IllegalArgumentException If a field is invalid.
          * @throws CloneNotSupportedException If the camera object cannot be cloned.
          */
-        public Camera build() throws CloneNotSupportedException {
+        public Camera build() {
             // Check if the camera's location has been set. If not, throw an exception.
             if (camera.p0 == null) {
                 throw new MissingResourceException("Missing camera location", "Camera", "p0");
@@ -180,10 +213,31 @@ public class Camera implements Cloneable {
             if (camera.distance <= 0) {
                 throw new MissingResourceException("Missing camera view plane distance", "Camera", "distance");
             }
-            // If all fields are valid, return a clone of the camera.
-            return (Camera) camera.clone();
+            if (camera.imageWriter == null) {
+                throw new MissingResourceException("Missing camera image writer", "Camera", "imageWriter");
+            }
+            if (camera.rayTracer == null) {
+                throw new MissingResourceException("Missing camera ray tracer", "Camera", "rayTracer");
+            }
 
-    }}}
+            try {
+                // If all fields are valid, return a clone of the camera.
+                return (Camera) camera.clone();
+            }catch(CloneNotSupportedException e){
+                return null;
+            }
+    }
+    public Builder setImageWriter(ImageWriter imageWriter) {
+        camera.imageWriter = imageWriter;
+        return this;
+    }
+    public Builder setRayTracer(RayTracerBase rayTracer) {
+        camera.rayTracer = rayTracer;
+        return this;
+    }
+
+
+    }}
 
 
 
