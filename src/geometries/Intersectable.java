@@ -5,10 +5,12 @@ import primitives.Point;
 import primitives.Ray;
 
 import java.util.List;
+import java.util.Objects;
+
 /**
  * Interface Intersectable is
  */
-public interface Intersectable {
+public abstract class Intersectable {
     public List<Point> findIntersections(Ray ray);
 
     public static class GeoPoint {
@@ -20,13 +22,13 @@ public interface Intersectable {
             this.point = point;
         }
 
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (!(obj instanceof GeoPoint)) return false; // if obj is not GeoPoint
-            GeoPoint other = (GeoPoint)obj; // cast obj to GeoPoint
-            return this.geometry.equals(other.geometry) && this.point.equals(other.point); // check if the geometry and point are equal
-
+        @Override
+        public boolean equals(Object o)
+        {
+            if (this == o) {return true;}
+            if (o == null || getClass() != o.getClass()) {return false;}
+            GeoPoint geoPoint = (GeoPoint) o;
+            return Objects.equals(geometry, geoPoint.geometry) && Objects.equals(point, geoPoint.point);
         }
         @Override
         public String toString() {
@@ -37,8 +39,7 @@ public interface Intersectable {
         }
 
         public List<GeoPoint> findGeoIntersections(Ray ray) {
-            findGeoIntersectionsHelper(ray);
-            return null;
+           return findGeoIntersectionsHelper(ray);
         }
 
         protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {

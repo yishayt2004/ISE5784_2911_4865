@@ -7,7 +7,7 @@ import primitives.Vector;
  * Interface Geometry is the basic interface for all geometric objects
  */
 
-public abstract class Geometry extends Inters§ectable{
+public abstract class Geometry extends Intersectable{
 
     protected Color emission = Color.BLACK;
     /**
