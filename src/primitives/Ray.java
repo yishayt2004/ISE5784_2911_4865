@@ -2,6 +2,9 @@ package primitives;
 
 import java.util.List;
 
+import geometries.Intersectable;
+import geometries.Intersectable.GeoPoint;
+
 /**
  * Class Ray is the basic class representing a ray in the 3D space
  */
@@ -88,6 +91,43 @@ public class Ray
         }
         return temp;
 }
+
+        /**
+        * find the closest point to the head of the ray
+        * @param ray list of points
+        * @return the closest point to the head of the ray
+        */
+
+        public GeoPoint findClosestGeoPoint(List<GeoPoint> list)
+        {
+            GeoPoint closestPoint;
+            double minDistance, temp;
+
+            // null list
+            if (list.size() == 0)
+            {
+                return null;
+            }
+
+            closestPoint = list.get(0);
+            minDistance = head.distanceSquared(closestPoint.point);
+
+            for (Intersectable.GeoPoint p : list)
+            {
+                temp = head.distanceSquared(p.point);
+
+                if (temp < minDistance)
+                {
+                    minDistance = temp;
+                    closestPoint = p;
+                }
+            }
+
+            return closestPoint;
+        }
+
+
+
 
 
 }
