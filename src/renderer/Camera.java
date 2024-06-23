@@ -43,7 +43,7 @@ public class Camera implements Cloneable {
      * @return Ray from the camera to the pixel
      */
 
-    public Ray constructorRay(int nX, int nY, int j, int i) {
+    public Ray constructRay(int nX, int nY, int j, int i) {
         Point p = p0.add(vTo.scale(distance)); // Pij = P0 + d*Vto
         double rY = height / nY;
         double rX = width / nX;
@@ -67,7 +67,7 @@ public class Camera implements Cloneable {
         int nY = imageWriter.getNy();
         for (int i = 0; i < nY; i++) {
             for (int j = 0; j < nX; j++) {
-                Ray ray = constructorRay(nX, nY, j, i);
+                Ray ray = constructRay(nX, nY, j, i);
                 Color color = rayTracer.traceRay(ray);
                 imageWriter.writePixel(j, i, color);
             }

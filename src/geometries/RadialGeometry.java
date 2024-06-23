@@ -10,7 +10,7 @@ import java.util.List;
  * RadialGeometry class represents the radius of a radial geometry in 3D Cartesian coordinate
  * system
  */
-public class RadialGeometry implements Geometry {
+public class RadialGeometry extends Geometry {
     public double radius;
 
     /**

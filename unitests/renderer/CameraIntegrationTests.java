@@ -23,7 +23,7 @@ public class CameraIntegrationTests
         {
             for (int column = 0; column < ny; column++)
             {
-                Ray ray = camera.constructorRay(nx, ny, column, row);
+                Ray ray = camera.constructRay(nx, ny, column, row);
                 var intersections = intersectable.findIntersections(ray);
                 if (intersections != null)
                 {
@@ -46,6 +46,8 @@ public class CameraIntegrationTests
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setLocation(new Point(0, 0, 0))
                 .setVpSize(9, 9)
+                .setImageWriter(new ImageWriter("test", 9, 9))
+                .setRayTracer(new SimpleRayTracer(null))
                 .setVpDistance(1)
                 .build();
 
@@ -57,6 +59,8 @@ public class CameraIntegrationTests
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setLocation(new Point(0, 0, 1.5))
                 .setVpSize(1, 1)
+              .setRayTracer(new SimpleRayTracer(null))
+              .setImageWriter(new ImageWriter("test", 1, 1))
                 .setVpDistance(1)
                 .build();
         Sphere s2 = new Sphere(2.5, new Point(0, 0, -2.5));
@@ -67,6 +71,8 @@ public class CameraIntegrationTests
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setLocation(new Point(0, 0, 0.5))
                 .setVpSize(3, 3)
+                .setRayTracer(new SimpleRayTracer(null))
+                .setImageWriter(new ImageWriter("test", 1, 1))
                 .setVpDistance(1)
                 .build();
         Sphere s3 = new Sphere(2, new Point(0, 0, -2));
@@ -77,6 +83,8 @@ public class CameraIntegrationTests
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setLocation(new Point(0, 0, -3))
                 .setVpSize(9, 9)
+                .setRayTracer(new SimpleRayTracer(null))
+                .setImageWriter(new ImageWriter("test", 1, 1))
                 .setVpDistance(1)
                 .build();
         Sphere s4 = new Sphere(4, new Point(0, 0, -4));
@@ -87,6 +95,8 @@ public class CameraIntegrationTests
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setLocation(new Point(0, 0, 0))
                 .setVpSize(9, 9)
+                .setRayTracer(new SimpleRayTracer(null))
+                .setImageWriter(new ImageWriter("test", 1, 1))
                 .setVpDistance(1)
                 .build();
         Sphere s5 = new Sphere(0.5, new Point(0, 0, 1));
@@ -106,6 +116,8 @@ public class CameraIntegrationTests
                 .setLocation(new Point(0, 0, 0))
                 .setVpSize(3, 3)
                 .setVpDistance(1)
+                .setRayTracer(new SimpleRayTracer(null))
+                .setImageWriter(new ImageWriter("test", 1, 1))
                 .build();
 
         Camera camera2 = Camera.getBuilder()
@@ -113,6 +125,8 @@ public class CameraIntegrationTests
                 .setLocation(new Point(0, 0, 0))
                 .setVpSize(3, 3)
                 .setVpDistance(1)
+                .setRayTracer(new SimpleRayTracer(null))
+                .setImageWriter(new ImageWriter("test", 1, 1))
                 .build();
 
 
@@ -147,6 +161,8 @@ public class CameraIntegrationTests
                 .setLocation(new Point(0, 0, 0))
                 .setVpSize(9, 9)
                 .setVpDistance(1)
+                .setRayTracer(new SimpleRayTracer(null))
+                .setImageWriter(new ImageWriter("test", 1, 1))
                 .build();
 
         // TC01: 1 intersections
