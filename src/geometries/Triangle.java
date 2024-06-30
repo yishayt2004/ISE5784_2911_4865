@@ -4,9 +4,12 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static primitives.Util.isZero;
+import geometries.Intersectable.GeoPoint;
+
 
 public class Triangle extends Polygon {
     public Triangle(Point p1, Point p2, Point p3)
@@ -39,7 +42,21 @@ public class Triangle extends Polygon {
        if(t1>0 && t2>0 && t3>0 || t1<0 && t2<0 && t3<0 )//ray is parallel to the triangle
             return intersection;
 
-       return null;
+
+        return null;
+
+    }
+
+    @Override
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+        List<Point> intersections = findIntersections(ray);
+        if (intersections == null) return null;
+        List<GeoPoint> result = new LinkedList<>();
+        for (Point p : intersections) {
+            result.add(new GeoPoint(this, p));
+        }
+        return result;
+
     }
 
 

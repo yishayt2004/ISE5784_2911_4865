@@ -37,4 +37,5 @@ public class RadialGeometry extends Geometry {
     public List<Point> findIntersections(Ray ray) {
         return List.of();
     }
+
 }

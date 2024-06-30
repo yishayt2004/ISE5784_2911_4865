@@ -123,6 +123,18 @@ public class Polygon extends Geometry
       return plane.findIntersections(ray);
    }
 
+   @Override
+   protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+        List<Point> intersections = findIntersections(ray);
+        if (intersections == null) return null;
+        List<GeoPoint> result = new LinkedList<>();
+        for (Point p : intersections) {
+             result.add(new GeoPoint(this, p));
+        }
+        return result;
+
+   }
+
 }
 
 

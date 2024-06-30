@@ -65,10 +65,17 @@ public List<Point> findIntersections(Ray ray)
     }
     double t = normal.dotProduct(q.subtract(p0)) / normal.dotProduct(direction);
     return alignZero(t) <= 0 ? null : List.of(p0.add(direction.scale(t)));
-
-
-
-
 }
 
+@Override
+protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+    Vector direction = ray.getDirection();
+    Point p0 = ray.getPoint(0);
+    if ((isZero(direction.dotProduct(normal)) || q.equals(p0))) {
+        return null;
+    }
+    double t = normal.dotProduct(q.subtract(p0)) / normal.dotProduct(direction);
+    return alignZero(t) <= 0 ? null : List.of(new GeoPoint(this, ray.getPoint(t)));
+
+}
 }

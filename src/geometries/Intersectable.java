@@ -11,7 +11,10 @@ import java.util.Objects;
  * Interface Intersectable is
  */
 public abstract class Intersectable {
-    public abstract List<Point> findIntersections(Ray ray);
+    public List<Point> findIntersections(Ray ray) {
+        var geoList = findGeoIntersections(ray);
+        return geoList == null ? null : geoList.stream().map(gp -> gp.point).toList();
+    }
 
     public static class GeoPoint {
         public Geometry geometry;
@@ -50,5 +53,6 @@ public abstract class Intersectable {
         protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
             return null;
         }
+
 
 }

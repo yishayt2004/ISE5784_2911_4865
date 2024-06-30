@@ -59,5 +59,12 @@ public class Sphere extends RadialGeometry {
         return null;
     }
 
+    @Override
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+        List<Point> intersections = findIntersections(ray);
+        if (intersections == null) return null;
+        return List.of(new GeoPoint(this, intersections.get(0)));
+    }
+
 
 }
