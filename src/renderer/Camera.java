@@ -67,13 +67,26 @@ public class Camera implements Cloneable {
         int nY = imageWriter.getNy();
         for (int i = 0; i < nY; i++) {
             for (int j = 0; j < nX; j++) {
-                Ray ray = constructRay(nX, nY, j, i);
-                Color color = rayTracer.traceRay(ray);
-                imageWriter.writePixel(j, i, color);
+                castRay(nX, nY, j, i);
             }
         }
         return this;
     }
+
+    /**
+     * this func will cast a ray from the camera to the pixel and will calculate the color of the pixel
+     *
+     * @param nX - number of pixels in the x direction
+     * @param nY - number of pixels in the y direction
+     * @param j  - pixel index in the x direction
+     * @param i  - pixel index in the y direction
+     */
+    private void castRay(int nX, int nY, int j, int i) {
+        Ray ray = constructRay(nX, nY, j, i);
+        Color color = rayTracer.traceRay(ray);
+        imageWriter.writePixel(j, i, color);
+    }
+
     public static Builder getBuilder() {
         return new Builder();
     }

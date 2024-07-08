@@ -10,8 +10,26 @@ import java.util.List;
 import static primitives.Util.alignZero;
 
 public class SimpleRayTracer extends RayTracerBase {
+
+    private static final double DELTA = 0.1;
+
     public SimpleRayTracer(Scene scene) {
         super(scene);
+    }
+
+    private boolean unshaded(Intersectable.GeoPoint gp, LightSource ls, Vector l, Vector n)//checks if the point is shaded
+    {
+        Vector lightDirection = l.scale(-1); // from point to light source
+        Ray lightRay = new Ray(gp.point, lightDirection); //ray from point to light source
+        List<Intersectable.GeoPoint> intersections = scene.geometries.findGeoIntersections(lightRay); //list of intersections
+        if (intersections == null) return true; //if there are no intersections
+        double lightDistance = lightDirection.length(); //distance from point to light source
+        for (Intersectable.GeoPoint i : intersections) {
+            //if the intersection is behind the light source and the normal vectors are in the same direction so the point is shaded
+            if (Util.alignZero(i.point.distance(gp.point) - lightDistance) <= 0 && n.dotProduct(l) * n.dotProduct(i.geometry.getNormal(i.point)) > 0)
+                return false;
+        }
+        return true;
     }
 
     @Override
@@ -21,8 +39,6 @@ public class SimpleRayTracer extends RayTracerBase {
             return scene.background;
         return calcColor(ray.findClosestGeoPoint(intersections), ray);
     }
-
-
 
     /**
      * Calculate the color at a point
@@ -47,7 +63,7 @@ public class SimpleRayTracer extends RayTracerBase {
         Vector v = ray.getDirection();
         double nv = alignZero(n.dotProduct(v));
 
-        if (nv == 0) return null;
+        if (nv == 0) return gp.geometry.getEmission();
 
         Material material = gp.geometry.getMaterial();
         Color color = gp.geometry.getEmission();
@@ -56,7 +72,7 @@ public class SimpleRayTracer extends RayTracerBase {
             Vector l = lightSource.getL(gp.point);
             double nl = alignZero(n.dotProduct(l));
 
-            if (Util.compareSign(nl, nv)) {
+            if (Util.compareSign(nl, nv)&& unshaded(gp, lightSource, l, n)) {
                 Color iL = lightSource.getIntensity(gp.point);
                 color = color.add(iL.scale(calcDiffusive(material, nl).add(calcSpecular(material, n, l, nl, v))));
             }
@@ -90,6 +106,8 @@ public class SimpleRayTracer extends RayTracerBase {
         double max0 = Math.max(0, v.scale(-1).dotProduct(reflectVector));
         return material.kS.scale(Math.pow(max0, material.nShininess));
     }
+
+
 
 
 

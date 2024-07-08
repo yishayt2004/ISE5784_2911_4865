@@ -12,4 +12,6 @@ public interface LightSource
 
     LightSource setNarrowBeam(int i);
 
+    public double getDistance(Point point);
+
 }
