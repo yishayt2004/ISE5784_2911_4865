@@ -144,7 +144,7 @@ public class Camera implements Cloneable {
         public Builder setDirection(Vector vto, Vector vup){
             // Check if the vectors are orthogonal. If not, throw an exception.
             if (vto.dotProduct(vup) != 0) {
-                throw new IllegalArgumentException("vTo and vUp are not orthogonal");
+                throw new IllegalArgumentException("vTo and vUp not orthogonal");
             }
             // Normalize the vectors and assign them to the camera's direction vectors.
             camera.vTo = vto.normalize();

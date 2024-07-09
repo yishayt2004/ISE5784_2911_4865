@@ -10,6 +10,7 @@ import geometries.Intersectable.GeoPoint;
  */
 public class Ray
 {
+    private static final double DELTA = 0.1;
     private Point head;
     private Vector direction;
 
@@ -24,6 +25,8 @@ public class Ray
         this.head = point;
         this.direction = direction.normalize();
     }
+
+
 
 
 
@@ -91,7 +94,7 @@ public class Ray
             double minDistance, temp;
 
             // null list
-            if (list.size() == 0)
+            if (list==null)
             {
                 return null;
             }
@@ -112,6 +115,11 @@ public class Ray
 
             return closestPoint;
         }
+    public Ray(Point p0, Vector direction, Vector normal) {
+        double dotProduct = direction.dotProduct(normal);
+        this.head = p0.add(normal.scale(dotProduct > 0 ? DELTA : -DELTA));
+        this.direction = direction.normalize();
+    }
 
 
 
