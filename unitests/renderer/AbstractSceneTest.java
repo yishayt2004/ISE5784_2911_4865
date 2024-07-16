@@ -14,7 +14,9 @@ public class AbstractSceneTest {
     private final Scene scene = new Scene("Abstract Test Scene");
     private final Camera.Builder cameraBuilder = Camera.getBuilder()
             .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
-            .setRayTracer(new SimpleRayTracer(scene));
+            .setRayTracer(new SimpleRayTracer(scene))
+            .setNumSamples(5);
+
 
     @Test
     public void abstractScene() {

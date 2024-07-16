@@ -17,6 +17,7 @@ public class Camera implements Cloneable {
     double distance;
     double width;
     double height;
+    int numSamples = 1;
 
     ImageWriter imageWriter;
     RayTracerBase rayTracer;
@@ -58,6 +59,22 @@ public class Camera implements Cloneable {
         return new Ray(p0, p.subtract(p0)); // return Ray from the camera to the pixel
     }
 
+    public Ray constructRay(int nX, int nY, double j, double i) {
+        Point p = p0.add(vTo.scale(distance)); // Pij = P0 + d*Vto
+        double rY = height / nY;
+        double rX = width / nX;
+        double yI = (i - nY / 2d) * rY + rY / 2d;
+        double xJ = (j - nX / 2d) * rX + rX / 2d;
+        if (!isZero(xJ)) { // if xJ is not zero
+            p = p.add(vRight.scale(xJ));
+        }
+        if (!isZero(yI)) {  // if yI is not zero
+            p = p.add(vUp.scale(-yI));
+        }
+        return new Ray(p0, p.subtract(p0)); // return Ray from the camera to the pixel
+    }
+
+
     /**
      * this func will loop over all the pixels in the view plane and will calculate the color of each pixel
      * @return the camera object
@@ -82,8 +99,20 @@ public class Camera implements Cloneable {
      * @param i  - pixel index in the y direction
      */
     private void castRay(int nX, int nY, int j, int i) {
-        Ray ray = constructRay(nX, nY, j, i);
-        Color color = rayTracer.traceRay(ray);
+        Color sum = new Color(0, 0, 0);
+
+        for (int k = 0; k < numSamples * numSamples; ++k) {
+            double x = j + (k % numSamples + (Math.random() - 0.5)) / (double) numSamples;
+            double y = i + (k / numSamples + (Math.random() - 0.5)) / (double) numSamples;
+
+
+            Ray ray = constructRay(nX, nY, x, y);
+            Color color = rayTracer.traceRay(ray);
+            sum = sum.add(color);
+        }
+
+        Color color = sum.scale(1d / (numSamples * numSamples));
+
         imageWriter.writePixel(j, i, color);
     }
 
@@ -115,6 +144,8 @@ public class Camera implements Cloneable {
         imageWriter.writeToImage();
         return this;
     }
+
+
 
     public static class Builder {
         // Builder fields
@@ -178,6 +209,11 @@ public class Camera implements Cloneable {
          */
         public Builder setVpDistance(double distance){
             camera.distance = distance;
+            return this;
+        }
+
+        public Builder setNumSamples(int numSamples) {
+            camera.numSamples = numSamples;
             return this;
         }
 
