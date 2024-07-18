@@ -77,4 +77,16 @@ public class Point {
         if (!(o instanceof Point point)) return false;
         return Objects.equals(xyz, point.xyz);
     }
+
+    public double getX() {
+        return xyz.d1;
+    }
+
+    public double getY() {
+        return xyz.d2;
+    }
+
+    public double getZ() {
+        return xyz.d3;
+    }
 }

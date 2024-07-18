@@ -10,6 +10,7 @@ import java.util.MissingResourceException;
 import static primitives.Util.isZero;
 
 public class Camera implements Cloneable {
+
     private Point p0;
     Vector vUp;
     Vector vTo;
@@ -19,10 +20,16 @@ public class Camera implements Cloneable {
     double height;
     int numSamples = 1;
 
+    //multi-threading
+    private int threadsCount = 0; // -2 auto, -1 range/stream, 0 no threads, 1+ number of threads private final int SPARE_THREADS = 2; // Spare threads if trying to use all the cores
+    private double printInterval = 0; // printing progress percentage interval
+    private final int SPARE_THREADS = 2; // Spare threads if trying to use all the cores
+
+
     ImageWriter imageWriter;
     RayTracerBase rayTracer;
 
-    private Camera() {
+    public Camera() {
         p0 = null;
         vUp = null;
         vTo = null;
@@ -32,7 +39,12 @@ public class Camera implements Cloneable {
         height = 0;
     }
 
-
+    public Camera(Point point, Vector vector, Vector vector1) {
+        p0 = point;
+        vTo = vector;
+        vUp = vector1;
+        vRight = vTo.crossProduct(vUp).normalize();
+    }
 
 
     /**
@@ -286,7 +298,21 @@ public class Camera implements Cloneable {
     }
 
 
-    }}
+    }
+    public Camera setMultithreading(int threads) {
+        if (threads < -2) throw new IllegalArgumentException("Multithreading must be -2 or higher");
+        if (threads >= -1) threadsCount = threads;
+        else { // == -2
+            int cores = Runtime.getRuntime().availableProcessors() - SPARE_THREADS;
+            threadsCount = cores <= 2 ? 1 : cores;
+        }
+        return this;
+    }
+    public Camera setPrintInterval(double interval) {
+        printInterval = interval;
+        return this;
+    }
+}
 
 
 

@@ -78,5 +78,8 @@ public class ImageWriter {
       image.setRGB(xIndex, yIndex, color.getColor().getRGB());
    }
 
+   public String getImageName() {
+        return imageName;
+   }
 }
 

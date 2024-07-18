@@ -193,5 +193,51 @@ public class LightsTests {
                 .renderImage()
                 .writeToImage();
     }
+    /** Produce a picture of two triangles lighted by a narrow spotlight */
+    @Test
+    public void yishayTest() {
+        scene2.geometries.add(new Polygon(new Point(0, -500, 300),
+                new Point(0, -400, 300), new Point(0, -400, 500), new Point(0, -500, 500))
+                .setEmission(new Color(WHITE))
+                .setMaterial(new Material().setkD(0.3).setkS(0.2).setnShininess(50)),
+                new Polygon(new Point(0, 500, 300),
+                        new Point(0, 400, 300), new Point(0, 400, 500), new Point(0, 500, 500))
+                        .setEmission(new Color(WHITE))
+                        .setMaterial(new Material().setkD(0.3).setkS(0.2).setnShininess(50)),
+                new Polygon(new Point(0, 350, 350),
+                        new Point(0, 250, 350), new Point(0, 250, 0), new Point(0, 350, 0))
+                        .setEmission(new Color(WHITE))
+                        .setMaterial(new Material().setkD(0.3).setkS(0.2).setnShininess(50)),
+                new Polygon(new Point(0, -350, 350),
+                        new Point(0, -250, 350), new Point(0, -250, 0), new Point(0, -350, 0))
+                        .setEmission(new Color(WHITE))
+                        .setMaterial(new Material().setkD(0.3).setkS(0.2).setnShininess(50)),
+                new Polygon(new Point(0, 50, 350),
+                        new Point(0, -50, 350), new Point(0, -50, 0), new Point(0, 50, 0))
+                        .setEmission(new Color(WHITE))
+                        .setMaterial(new Material().setkD(0.3).setkS(0.2).setnShininess(50)),
+                new Polygon(new Point(0, 350, 100),
+                        new Point(0, -350, 100), new Point(0, -350, 0), new Point(0, 350, 0))
+                        .setEmission(new Color(WHITE))
+                        .setMaterial(new Material().setkD(0.3).setkS(0.2).setnShininess(50))
+
+
+        );
+
+        scene2.lights.add(new SpotLight(trianglesLightColor, trianglesLightPosition, trianglesLightDirection)
+                .setKl(0.001).setKq(0.00004).setNarrowBeam(10));
+
+        Camera.Builder cameray                 = Camera.getBuilder()
+                .setRayTracer(new SimpleRayTracer(scene2))
+                .setLocation(new Point(-5000,0,0)).
+                setDirection(new Vector(1,0,0),new Vector(0,0,1))
+                .setVpSize(200, 200).setVpDistance(500);
+
+        cameray
+                .setImageWriter(new ImageWriter("yishay", 500, 500))
+                .build()
+                .renderImage()
+                .writeToImage();
+    }
 
 }

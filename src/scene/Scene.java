@@ -1,11 +1,13 @@
 package scene;
 
 import geometries.Geometries;
+
 import lighting.Ambientlight;
 import lighting.Light;
 import lighting.LightSource;
 import primitives.Color;
 import lighting.Ambientlight;
+import renderer.Camera;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -43,4 +45,6 @@ public Scene(String name) {
     this.geometries.add(geometries);
     return this;
     }
+
+
 }
