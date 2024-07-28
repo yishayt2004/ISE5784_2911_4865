@@ -1,6 +1,6 @@
 package renderer;
 
-public record Pixel(int row , int col) {
+record Pixel(int row, int col) {
     private static int maxRows = 0;
     private static int maxCols = 0;
     private static long totalPixels = 0l;
@@ -14,9 +14,6 @@ public record Pixel(int row , int col) {
     private static Object mutexNext = new Object();
     private static Object mutexPixels = new Object();
 
-
-
-
     static void initialize(int maxRows, int maxCols, double interval) {
         Pixel.maxRows = maxRows;
         Pixel.maxCols = maxCols;
@@ -25,54 +22,31 @@ public record Pixel(int row , int col) {
         if (print = printInterval != 0) System.out.printf(PRINT_FORMAT, 0d);
     }
 
-    public static Pixel nextPixel() {
+    static Pixel nextPixel() {
         synchronized (mutexNext) {
-            if (cRow >= maxRows) {
-                return null;
-            }
-
+            if (cRow == maxRows) return null;
             ++cCol;
-            if (cCol < maxCols) {
-                return new Pixel(cRow, cCol);
-            }
-
+            if (cCol < maxCols) return new Pixel(cRow, cCol);
             cCol = 0;
             ++cRow;
-            if (cRow < maxRows) {
-                return new Pixel(cRow, cCol);
-            }
+            if (cRow < maxRows) return new Pixel(cRow, cCol);
         }
         return null;
     }
 
-    private synchronized int nextP(Pixel target) {
-        // Increment the column and pixels count
-        ++cCol;
-        ++pixels;
-        if (cCol < maxCols) {
-            target = new Pixel(cRow, cCol);
-            if (print && pixels == printInterval) {
-                ++lastPrinted;
-                printInterval = pixels * (lastPrinted + 1) / 100;
-                return lastPrinted;
+    static void pixelDone() {
+        boolean flag = false;
+        int percentage = 0;
+        synchronized (mutexPixels) {
+            ++pixels;
+            if (print) {
+                percentage = (int) (1000l * pixels / totalPixels);
+                if (percentage - lastPrinted >= printInterval) {
+                    lastPrinted = percentage;
+                    flag = true;
+                }
             }
-            return 0;
         }
-        // Increment the row if we have reached the end of the column
-        ++cRow;
-        if (cRow < maxRows) {
-            cCol = 0;
-            target = new Pixel(cRow, cCol);
-            if (print && pixels == printInterval) {
-                ++lastPrinted;
-                printInterval = pixels * (lastPrinted + 1) / 100;
-                return lastPrinted;
-            }
-            return 0;
-        }
-        // If we've reached the end of rows, return -1 indicating completion
-        return -1;
+        if (flag) System.out.printf(PRINT_FORMAT, percentage / 10d);
     }
-
-
 }

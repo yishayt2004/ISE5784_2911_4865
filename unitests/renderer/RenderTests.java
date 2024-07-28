@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import geometries.*;
 import geometries.Triangle;
 import lighting.*;
+import parser.Json;
 import primitives.*;
 import renderer.*;
 import scene.Scene;
@@ -79,19 +80,16 @@ public class RenderTests {
                 .writeToImage();
     }
 
-//    /** Test for XML based scene - for bonus */
-//    @Test
-//    public void basicRenderXml() {
-//        // enter XML file name and parse from XML file into scene object
-//        // using the code you added in appropriate packages
-//        // ...
-//        // NB: unit tests is not the correct place to put XML parsing code
-//
-//        camera
-//                .setImageWriter(new ImageWriter("xml render test", 1000, 1000))
-//                .build()
-//                .renderImage()
-//                .printGrid(100, new Color(YELLOW))
-//                .writeToImage();
-//    }
+    /** Test for XML based scene - for bonus */
+    @Test
+    public void basicRenderJson() {
+        Scene scene = Json.sceneFromJson("jsons/sceneJson.json");
+        camera
+                .setImageWriter(new ImageWriter("json render test", 1000, 1000))
+                .setRayTracer(new SimpleRayTracer(scene))
+                .build()
+                .renderImage()
+                .printGrid(100, new Color(YELLOW))
+                .writeToImage();
+    }
 }

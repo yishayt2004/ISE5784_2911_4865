@@ -23,64 +23,6 @@ import java.io.IOException;
  */
 public class Json
 {
-    /**
-
-     * Reads a JSON file at the specified filePath and converts it into an ImageWriter object.
-     *
-     * @param filePath the path to the JSON file
-     * @return the ImageWriter object created from the JSON file
-     * @throws RuntimeException if the JSON file is not found or there is an error parsing the file
-     */
-    public static ImageWriter imageWriterFromJson(String filePath)
-    {
-        Gson gson = new Gson();
-
-        try
-        {
-            // Read Json from file
-            FileReader fileReader = new FileReader(filePath);
-            PseudoClasses.imageWriter = gson.fromJson(fileReader, JsonImageWriter.class);
-        }
-        catch (FileNotFoundException e)
-        {
-            throw new RuntimeException(e);
-        }
-
-        return new ImageWriter(
-                PseudoClasses.imageWriter.getName(),
-                PseudoClasses.imageWriter.getnX(),
-                PseudoClasses.imageWriter.getnY());
-    }
-
-    /**
-     * Converts an ImageWriter object to JSON format and writes it to the specified filePath.
-     *
-     * @param writer the ImageWriter object to be converted to JSON
-     * @param filePath the path to the output JSON file
-     * @throws RuntimeException if there is an error writing the JSON file
-     */
-    public static void imageWriterToJson(ImageWriter writer, String filePath)
-    {
-        // Creating ImageWriter to write
-        int nx = 800;
-        int ny = 500;
-
-        PseudoClasses.imageWriter = new parser.JsonImageWriter(writer);
-
-        Gson gson = new Gson();
-
-        try
-        {
-            // Write Json to a file
-            FileWriter fileWriter = new FileWriter(filePath);
-            gson.toJson(PseudoClasses.imageWriter, fileWriter);
-            fileWriter.close();
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * Reads a JSON file at the specified filePath and converts it into a Scene object.

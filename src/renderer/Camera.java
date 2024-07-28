@@ -5,6 +5,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.MissingResourceException;
 
 import static primitives.Util.isZero;
@@ -19,6 +21,7 @@ public class Camera implements Cloneable {
     double width;
     double height;
     int numSamples = 1;
+    private boolean adaptive;
 
     //multi-threading
     private int threadsCount = 0; // -2 auto, -1 range/stream, 0 no threads, 1+ number of threads private final int SPARE_THREADS = 2; // Spare threads if trying to use all the cores
@@ -56,21 +59,6 @@ public class Camera implements Cloneable {
      * @return Ray from the camera to the pixel
      */
 
-    public Ray constructRay(int nX, int nY, int j, int i) {
-        Point p = p0.add(vTo.scale(distance)); // Pij = P0 + d*Vto
-        double rY = height / nY;
-        double rX = width / nX;
-        double yI = (i - nY / 2d) * rY + rY / 2d;
-        double xJ = (j - nX / 2d) * rX + rX / 2d;
-        if (!isZero(xJ)) { // if xJ is not zero
-            p = p.add(vRight.scale(xJ));
-        }
-        if (!isZero(yI)) {  // if yI is not zero
-            p = p.add(vUp.scale(-yI));
-        }
-        return new Ray(p0, p.subtract(p0)); // return Ray from the camera to the pixel
-    }
-
     public Ray constructRay(int nX, int nY, double j, double i) {
         Point p = p0.add(vTo.scale(distance)); // Pij = P0 + d*Vto
         double rY = height / nY;
@@ -86,19 +74,40 @@ public class Camera implements Cloneable {
         return new Ray(p0, p.subtract(p0)); // return Ray from the camera to the pixel
     }
 
-
     /**
      * this func will loop over all the pixels in the view plane and will calculate the color of each pixel
      * @return the camera object
      */
-    public Camera renderImage(){
-        int nX = imageWriter.getNx();
-        int nY = imageWriter.getNy();
-        for (int i = 0; i < nY; i++) {
-            for (int j = 0; j < nX; j++) {
-                castRay(nX, nY, j, i);
-            }
+    public Camera renderImage() {
+        int ny = imageWriter.getNy();
+        int nx = imageWriter.getNx();
+        Pixel.initialize(ny, nx, printInterval);
+
+        if (threadsCount == 0) {
+            for (int i = 0; i < ny; ++i)
+                for (int j = 0; j < nx; ++j)
+                    castRay(nx, ny, j, i);
+            return this;
         }
+        List<Thread> threads = new LinkedList<>();
+        int availableProcessors = threadsCount == -1 ? Runtime.getRuntime().availableProcessors()
+                : threadsCount;
+
+        for (int t = 0; t < availableProcessors; t++) {
+            threads.add(new Thread(() -> {
+                Pixel pixel;
+                while ((pixel = Pixel.nextPixel()) != null)
+                    castRay(nx, ny, pixel.col(), pixel.row());
+            }));
+        }
+        for (var thread : threads)
+            thread.start();
+        try {
+            for (var thread : threads)
+                thread.join();
+        } catch (InterruptedException ignore) {
+        }
+
         return this;
     }
 
@@ -150,7 +159,12 @@ public class Camera implements Cloneable {
     public double getDistance() {return distance;}
     public double getWidth() {return width;}
     public double getHeight() {return height;}
-
+    public int getNumSamples() {return numSamples;}
+    public ImageWriter getImageWriter() {return imageWriter;}
+    public RayTracerBase getRayTracer() {return rayTracer;}
+    public int getThreadsCount() {return threadsCount;}
+    public double getPrintInterval() {return printInterval;}
+    public boolean isAdaptive() {return adaptive;}
 
     public Camera writeToImage() {
         imageWriter.writeToImage();
@@ -209,6 +223,11 @@ public class Camera implements Cloneable {
         public Builder setVpSize(double width, double height){
             camera.width = width;
             camera.height = height;
+            return this;
+        }
+
+        public Builder setAdaptive(boolean adaptive) {
+            camera.adaptive = adaptive;
             return this;
         }
 
@@ -296,22 +315,22 @@ public class Camera implements Cloneable {
         camera.rayTracer = rayTracer;
         return this;
     }
-
-
-    }
-    public Camera setMultithreading(int threads) {
-        if (threads < -2) throw new IllegalArgumentException("Multithreading must be -2 or higher");
-        if (threads >= -1) threadsCount = threads;
-        else { // == -2
-            int cores = Runtime.getRuntime().availableProcessors() - SPARE_THREADS;
-            threadsCount = cores <= 2 ? 1 : cores;
+        public Builder setMultithreading(int threads) {
+            if (threads < -2) throw new IllegalArgumentException("Multithreading must be -2 or higher");
+            if (threads >= -1) camera.threadsCount = threads;
+            else { // == -2
+                int cores = Runtime.getRuntime().availableProcessors() - camera.SPARE_THREADS;
+                camera.threadsCount = cores <= 2 ? 1 : cores;
+            }
+            return this;
         }
-        return this;
+        public Builder setPrintInterval(double interval) {
+            camera.printInterval = interval;
+            return this;
+        }
+
     }
-    public Camera setPrintInterval(double interval) {
-        printInterval = interval;
-        return this;
-    }
+
 }
 
 

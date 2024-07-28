@@ -51,6 +51,7 @@ public class AbstractSceneTest {
                 .setVpDistance(1000)
                 .setVpSize(500, 500)
                 .setImageWriter(new ImageWriter("abstractScene", 1000, 1000))
+                .setMultithreading(-1)
                 .build()
                 .renderImage()
                 .writeToImage();
