@@ -1,9 +1,14 @@
 package renderer;
 
+
 import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +32,17 @@ public class Camera implements Cloneable {
     private int threadsCount = 0; // -2 auto, -1 range/stream, 0 no threads, 1+ number of threads private final int SPARE_THREADS = 2; // Spare threads if trying to use all the cores
     private double printInterval = 0; // printing progress percentage interval
     private final int SPARE_THREADS = 2; // Spare threads if trying to use all the cores
+
+    /**
+     * all the corners for the corner list in adaptive super sampling
+     */
+    private static final int TOP_LEFT = 0;
+    private static final int TOP_RIGHT = 1;
+    private static final int BOTTOM_LEFT = 2;
+    private static final int BOTTOM_RIGHT = 3;
+
+    private boolean isAdaptive = false;
+
 
 
     ImageWriter imageWriter;
@@ -110,6 +126,96 @@ public class Camera implements Cloneable {
 
         return this;
     }
+    /**
+     * Return list of the 4 edges of a pixel.
+     *
+     * @param nX - the index of the pixel in geometric coordinates (X,)
+     * @param nY - the index of the pixel in geometric coordinates (,Y)
+     * @param j - the index of the pixel in matrix coordinates [i][]
+     * @param i - the index of the pixel in matrix coordinates [][j]
+     * @return list of the corners: [top left, top right, bottom left, bottom right]
+     */
+    public List<Point> constructFourEdges(int nX, int nY, int j, int i) {
+        Point center = constructPoint(nX, nY, j, i, false);
+        Vector up = vUp.scale(height / (2 * nY)), down = vUp.scale(-height / (2 * nY)), left = vRight.scale(-width / (2 * nX)), right = vRight.scale(width / (2 * nX));
+        return new ArrayList<>(List.of(center.add(up).add(left), center.add(up).add(right), center.add(down).add(left), center.add(down).add(right)));
+    }
+
+    private Point constructPoint(int nX, int nY, int j, int i, boolean b) {
+        Point p = p0.add(vTo.scale(distance));
+        double rY = height / nY;
+        double rX = width / nX;
+        double yI = (i - nY / 2d) * rY + rY / 2d;
+        double xJ = (j - nX / 2d) * rX + rX / 2d;
+        if (!isZero(xJ)) {
+            p = p.add(vRight.scale(xJ));
+        }
+        if (!isZero(yI)) {
+            p = p.add(vUp.scale(-yI));
+        }
+        return p;
+    }
+
+    /**
+     * Calculate the color of a pixel by adaptive super sampling formula.
+     *
+     * @param topLeft the top left corner of the sub pixel
+     * @param topRight the top right corner of the sub pixel
+     * @param bottomLeft the bottom left corner of the sub pixel
+     * @param bottomRight the bottom right corner of the sub pixel
+     * @param points all the points and their colors, so we won't calc the same color twice
+     * @param initialLevel the level of the recursion
+     * @return the color of the pixel of the sub pixel
+     */
+    private Color traceAdaptiveRays(Point topLeft, Point topRight, Point bottomLeft, Point bottomRight, HashMap<Point, Color> points, int initialLevel) {
+        Point center = topLeft.getMiddle(bottomRight);
+
+        // The end of the recursion
+        if (initialLevel == 0) {
+            return rayTracer.traceRay(new Ray(p0, center.subtract(p0)));
+        }
+
+        Color topLeftColor = points.getOrDefault(topLeft, null);
+        if (topLeftColor == null) {
+            topLeftColor = rayTracer.traceRay(new Ray(p0, topLeft.subtract(p0)));
+            points.put(topLeft, topLeftColor);
+        }
+
+        Color topRightColor = points.getOrDefault(topRight, null);
+        if (topRightColor == null) {
+            topRightColor = rayTracer.traceRay(new Ray(p0, topRight.subtract(p0)));
+            points.put(topRight, topRightColor);
+        }
+
+        Color bottomLeftColor = points.getOrDefault(bottomLeft, null);
+        if (bottomLeftColor == null) {
+            bottomLeftColor = rayTracer.traceRay(new Ray(p0, bottomLeft.subtract(p0)));
+            points.put(bottomLeft, bottomLeftColor);
+        }
+
+        Color bottomRightColor = points.getOrDefault(bottomRight, null);
+        if (bottomRightColor == null) {
+            bottomRightColor = rayTracer.traceRay(new Ray(p0, bottomRight.subtract(p0)));
+            points.put(bottomRight, bottomRightColor);
+        }
+
+        if (topLeftColor.equals(topRightColor) && topLeftColor.equals(bottomLeftColor) && topLeftColor.equals(bottomRightColor)) {
+            return topLeftColor;
+        } else {
+            Point topMiddle = topLeft.getMiddle(topRight);
+            Point bottomMiddle = bottomLeft.getMiddle(bottomRight);
+            Point middleLeft = topLeft.getMiddle(bottomLeft);
+            Point middleRight = topRight.getMiddle(bottomRight);
+
+            topLeftColor = traceAdaptiveRays(topLeft, topMiddle, middleLeft, center, points, initialLevel - 1).scale(0.25);
+            topRightColor = traceAdaptiveRays(topMiddle, topRight, center, middleRight, points, initialLevel - 1).scale(0.25);
+            bottomLeftColor = traceAdaptiveRays(middleLeft, center, bottomLeft, bottomMiddle, points, initialLevel - 1).scale(0.25);
+            bottomRightColor = traceAdaptiveRays(center, middleRight, bottomMiddle, bottomRight, points, initialLevel - 1).scale(0.25);
+
+            return topLeftColor.add(topRightColor).add(bottomLeftColor).add(bottomRightColor);
+        }
+    }
+
 
     /**
      * this func will cast a ray from the camera to the pixel and will calculate the color of the pixel
@@ -119,23 +225,39 @@ public class Camera implements Cloneable {
      * @param j  - pixel index in the x direction
      * @param i  - pixel index in the y direction
      */
+    /**
+     * Cast ray from any pixel and paint it.
+     *
+     * @param nX - number of pixels in the x direction
+     * @param nY - number of pixels in the y direction
+     * @param j  - pixel index in the x direction
+     * @param i  - pixel index in the y direction
+     */
     private void castRay(int nX, int nY, int j, int i) {
-        Color sum = new Color(0, 0, 0);
+        // Regular - one ray to each pixel
+        if (numSamples == 1) {
+            imageWriter.writePixel(j, i, rayTracer.traceRay(constructRay(nX, nY, j, i)));
+        } else { // If we are doing super sampling:
+            if (!isAdaptive) { // Without acceleration
+                Color sum = new Color(0, 0, 0);
+                for (int k = 0; k < numSamples * numSamples; ++k) {
+                    double x = j + (k % numSamples + (Math.random() - 0.5)) / numSamples;
+                    double y = i + (k / numSamples + (Math.random() - 0.5)) / numSamples;
 
-        for (int k = 0; k < numSamples * numSamples; ++k) {
-            double x = j + (k % numSamples + (Math.random() - 0.5)) / (double) numSamples;
-            double y = i + (k / numSamples + (Math.random() - 0.5)) / (double) numSamples;
-
-
-            Ray ray = constructRay(nX, nY, x, y);
-            Color color = rayTracer.traceRay(ray);
-            sum = sum.add(color);
+                    Ray ray = constructRay(nX, nY, x, y);
+                    sum = sum.add(rayTracer.traceRay(ray));
+                }
+                imageWriter.writePixel(j, i, sum.scale(1d / (numSamples * numSamples)));
+            } else { // With acceleration
+                HashMap<Point, Color> points = new HashMap<>();
+                int initialLevel = (int) (Math.log(numSamples - 1) / Math.log(2));
+                List<Point> corners = constructFourEdges(nX, nY, j, i);
+                imageWriter.writePixel(j, i, traceAdaptiveRays(corners.get(TOP_LEFT), corners.get(TOP_RIGHT), corners.get(BOTTOM_LEFT), corners.get(BOTTOM_RIGHT), points, initialLevel));
+            }
         }
-
-        Color color = sum.scale(1d / (numSamples * numSamples));
-
-        imageWriter.writePixel(j, i, color);
     }
+
+
 
     public static Builder getBuilder() {
         return new Builder();
@@ -173,6 +295,8 @@ public class Camera implements Cloneable {
 
 
 
+
+
     public static class Builder {
         // Builder fields
        private final Camera camera = new Camera();
@@ -187,6 +311,8 @@ public class Camera implements Cloneable {
             camera.p0 = p0;
             return this;
         }
+
+
 
         /**
          * Sets the direction vectors for the camera.
@@ -223,6 +349,11 @@ public class Camera implements Cloneable {
         public Builder setVpSize(double width, double height){
             camera.width = width;
             camera.height = height;
+            return this;
+        }
+
+        public Builder setIsAdaptive(boolean isAdaptive) {
+            camera.isAdaptive = isAdaptive;
             return this;
         }
 
@@ -315,12 +446,22 @@ public class Camera implements Cloneable {
         camera.rayTracer = rayTracer;
         return this;
     }
+
+        /**
+         * Sets the number of threads to be used for rendering.
+         *
+         * @param threads The number of threads to be used for rendering.
+         *
+         * @return The Builder object, allowing for method chaining.
+         *
+         * @throws IllegalArgumentException If the number of threads is less than -2.
+         */
         public Builder setMultithreading(int threads) {
             if (threads < -2) throw new IllegalArgumentException("Multithreading must be -2 or higher");
             if (threads >= -1) camera.threadsCount = threads;
             else { // == -2
-                int cores = Runtime.getRuntime().availableProcessors() - camera.SPARE_THREADS;
-                camera.threadsCount = cores <= 2 ? 1 : cores;
+                int cores = Runtime.getRuntime().availableProcessors() - camera.SPARE_THREADS; // available cores less SPARE_THREADS
+                camera.threadsCount = cores <= 2 ? 1 : cores; // if 1 or 2 cores left then no multithreading
             }
             return this;
         }
@@ -331,7 +472,13 @@ public class Camera implements Cloneable {
 
     }
 
-}
+
+
+    }
+
+
+
+
 
 
 

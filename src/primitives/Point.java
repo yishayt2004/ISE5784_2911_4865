@@ -89,4 +89,20 @@ public class Point {
     public double getZ() {
         return xyz.d3;
     }
+
+
+
+    /**
+     * function ti grt the point that is in the middle of two points
+     * @param other  the other point
+     * @return the point in the middle
+     */
+    public Point getMiddle(Point other){
+        return new Point((xyz.d1 + other.xyz.d1) / 2, (xyz.d2 + other.xyz.d2) / 2, (xyz.d3 + other.xyz.d3) / 2);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(xyz.d1, xyz.d2, xyz.d3);
+    }
 }
