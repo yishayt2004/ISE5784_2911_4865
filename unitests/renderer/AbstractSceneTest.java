@@ -15,7 +15,7 @@ public class AbstractSceneTest {
     private final Camera.Builder cameraBuilder = Camera.getBuilder()
             .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
             .setRayTracer(new SimpleRayTracer(scene))
-            .setNumSamples(5);
+            .setNumSamples(10);
 
 
     @Test
@@ -50,7 +50,7 @@ public class AbstractSceneTest {
         cameraBuilder.setLocation(new Point(0, 0, 1000))
                 .setVpDistance(1000)
                 .setVpSize(500, 500)
-                .setImageWriter(new ImageWriter("abstractScene", 1000, 1000))
+                .setImageWriter(new ImageWriter("abstractScene", 5000, 5000))
                 .setMultithreading(-1)
                 .build()
                 .renderImage()
