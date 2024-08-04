@@ -13,7 +13,7 @@ public class SnookerTest {
     /**
      * Scene of the tests
      */
-    private final Scene scene = new Scene("Test scene");
+    private final Scene scene = new Scene("Test scene")  ;
     /**
      * Camera builder of the tests
      */
