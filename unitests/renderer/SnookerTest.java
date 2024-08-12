@@ -14,17 +14,20 @@ public class SnookerTest {
      * Scene of the tests
      */
     private final Scene scene = new Scene("Test scene")  ;
+    Vector vTo = new Vector(-1, -30, 180).normalize();
+    Vector vUpInitial = new Vector(0, 1, 0);  // וקטור בכיוון ה-Y
+    Vector vRight = vTo.crossProduct(vUpInitial).normalize();
+    Vector vUp = vRight.crossProduct(vTo).normalize();
+
     /**
      * Camera builder of the tests
      */
     private final Camera.Builder camera = Camera.getBuilder()
             .setRayTracer(new SimpleRayTracer(scene))
             .setLocation(new Point(200, 200, 100))
-            .setDirection((Vector) new Point(0, 0, 0), new Vector(-1, -30, 180).normalize())
+            .setDirection(new Vector(-1, -30, 180).normalize(), vUp)
             .setVpDistance(500)
-            .setVpSize(800, 600)
-            .setNumSamples(9)
-            .setMultithreading(3);
+            .setVpSize(800, 600);
 
     /**
      * Produce a scene with basic 3D model and render it into a png image with a

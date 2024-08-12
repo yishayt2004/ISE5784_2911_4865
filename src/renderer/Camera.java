@@ -8,6 +8,7 @@ import primitives.Vector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import renderer.PixelManager.*;
 
 
 import java.util.LinkedList;
@@ -27,6 +28,7 @@ public class Camera implements Cloneable {
     double height;
     int numSamples = 1;
     private boolean adaptive;
+    private PixelManager pixelManager;
 
     //multi-threading
     private int threadsCount = 0; // -2 auto, -1 range/stream, 0 no threads, 1+ number of threads private final int SPARE_THREADS = 2; // Spare threads if trying to use all the cores
@@ -48,6 +50,7 @@ public class Camera implements Cloneable {
     ImageWriter imageWriter;
     RayTracerBase rayTracer;
 
+
     public Camera() {
         p0 = null;
         vUp = null;
@@ -64,6 +67,7 @@ public class Camera implements Cloneable {
         vUp = vector1;
         vRight = vTo.crossProduct(vUp).normalize();
     }
+
 
 
     /**
@@ -94,37 +98,85 @@ public class Camera implements Cloneable {
      * this func will loop over all the pixels in the view plane and will calculate the color of each pixel
      * @return the camera object
      */
+    /**
+     * Render the image without sample Size
+     * @return the camera
+     */
     public Camera renderImage() {
-        int ny = imageWriter.getNy();
-        int nx = imageWriter.getNx();
-        Pixel.initialize(ny, nx, printInterval);
 
-        if (threadsCount == 0) {
-            for (int i = 0; i < ny; ++i)
-                for (int j = 0; j < nx; ++j)
-                    castRay(nx, ny, j, i);
-            return this;
-        }
-        List<Thread> threads = new LinkedList<>();
-        int availableProcessors = threadsCount == -1 ? Runtime.getRuntime().availableProcessors()
-                : threadsCount;
+        // Calculate the number of pixels in the rows and columns
+        int nX = imageWriter.getNx();
+        int nY = imageWriter.getNy();
 
-        for (int t = 0; t < availableProcessors; t++) {
-            threads.add(new Thread(() -> {
-                Pixel pixel;
-                while ((pixel = Pixel.nextPixel()) != null)
-                    castRay(nx, ny, pixel.col(), pixel.row());
-            }));
+        pixelManager = new PixelManager(nY, nX, printInterval);
+
+        if(threadsCount==0) {
+            // Render the image
+            for (int i = 0; i < nY; i++)
+                for (int j = 0; j < nX; j++) {
+                    castRay(nX, nY, j, i);
+                }
         }
-        for (var thread : threads)
-            thread.start();
-        try {
-            for (var thread : threads)
-                thread.join();
-        } catch (InterruptedException ignore) {
+        else { // see further... option 2
+            var threads = new LinkedList<Thread>(); // list of threads
+            while (threadsCount-- > 0) // add appropriate number of threads
+                threads.add(new Thread(() -> { // add a thread with its code
+                    Pixel pixel; // current pixel(row,col)
+                    // allocate pixel(row,col) in loop until there are no more pixels
+                    while ((pixel = pixelManager.nextPixel()) != null)
+                        // cast ray through pixel (and color it – inside castRay)
+                        castRay(nX, nY, pixel.col(), pixel.row());
+                }));
+            // start all the threads
+            for (var thread : threads) thread.start();
+            // wait until all the threads have finished
+            try { for (var thread : threads) thread.join(); } catch (InterruptedException ignore) {}
         }
 
         return this;
+    }
+
+    /**
+     * Render the image with beam
+     * @param sampleSize
+     * @return the camera
+     */
+    public Camera renderImage(int sampleSize) {
+        if (sampleSize == 1)
+        {
+            return renderImage();
+        }
+        numSamples = sampleSize;
+        // Calculate the number of pixels in the rows and columns
+        int nX = imageWriter.getNx();
+        int nY = imageWriter.getNy();
+        pixelManager = new PixelManager(nY, nX, printInterval);
+
+            if(threadsCount==0)
+                // Render the image
+                for (int i = 0; i < nY; i++)
+                    for (int j = 0; j < nX; j++) {
+                        castRay(nX, nY, j, i);
+                    }
+            else { // see further... option 2
+                var threads = new LinkedList<Thread>(); // list of threads
+                while (threadsCount-- > 0) // add appropriate number of threads
+                    threads.add(new Thread(() -> { // add a thread with its code
+                        Pixel pixel; // current pixel(row,col)
+                        // allocate pixel(row,col) in loop until there are no more pixels
+                        while ((pixel = pixelManager.nextPixel()) != null)
+                            // cast ray through pixel (and color it – inside castRay)
+                            castRay(nX, nY, pixel.col(), pixel.row());
+                    }));
+                // start all the threads
+                for (var thread : threads) thread.start();
+                // wait until all the threads have finished
+                try { for (var thread : threads) thread.join(); } catch (InterruptedException ignore) {}
+            }
+            return this;
+
+
+
     }
     /**
      * Return list of the 4 edges of a pixel.
@@ -141,6 +193,8 @@ public class Camera implements Cloneable {
         return new ArrayList<>(List.of(center.add(up).add(left), center.add(up).add(right), center.add(down).add(left), center.add(down).add(right)));
     }
 
+
+
     private Point constructPoint(int nX, int nY, int j, int i, boolean b) {
         Point p = p0.add(vTo.scale(distance));
         double rY = height / nY;
@@ -155,6 +209,8 @@ public class Camera implements Cloneable {
         }
         return p;
     }
+
+
 
     /**
      * Calculate the color of a pixel by adaptive super sampling formula.
@@ -238,9 +294,9 @@ public class Camera implements Cloneable {
         if (numSamples == 1) {
             imageWriter.writePixel(j, i, rayTracer.traceRay(constructRay(nX, nY, j, i)));
         } else { // If we are doing super sampling:
-            if (!isAdaptive) { // Without acceleration
+            if (isAdaptive = false) { // Without acceleration
                 Color sum = new Color(0, 0, 0);
-                for (int k = 0; k < numSamples * numSamples; ++k) {
+                for (int k = 0; k < numSamples * numSamples; ++k) { // For each sample to the pixel - calculate the color and sum it
                     double x = j + (k % numSamples + (Math.random() - 0.5)) / numSamples;
                     double y = i + (k / numSamples + (Math.random() - 0.5)) / numSamples;
 
@@ -357,6 +413,8 @@ public class Camera implements Cloneable {
             return this;
         }
 
+
+
         public Builder setAdaptive(boolean adaptive) {
             camera.adaptive = adaptive;
             return this;
@@ -447,22 +505,9 @@ public class Camera implements Cloneable {
         return this;
     }
 
-        /**
-         * Sets the number of threads to be used for rendering.
-         *
-         * @param threads The number of threads to be used for rendering.
-         *
-         * @return The Builder object, allowing for method chaining.
-         *
-         * @throws IllegalArgumentException If the number of threads is less than -2.
-         */
-        public Builder setMultithreading(int threads) {
-            if (threads < -2) throw new IllegalArgumentException("Multithreading must be -2 or higher");
-            if (threads >= -1) camera.threadsCount = threads;
-            else { // == -2
-                int cores = Runtime.getRuntime().availableProcessors() - camera.SPARE_THREADS; // available cores less SPARE_THREADS
-                camera.threadsCount = cores <= 2 ? 1 : cores; // if 1 or 2 cores left then no multithreading
-            }
+
+        public Builder setThreadsCount(int _threadsCount) {
+            camera.threadsCount = _threadsCount;
             return this;
         }
         public Builder setPrintInterval(double interval) {

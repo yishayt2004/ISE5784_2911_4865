@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Scene {
-    String name;
+    public String name;
     public Color background = Color.BLACK;
     public Ambientlight ambientLight = Ambientlight.NONE;
     public Geometries geometries = new Geometries();

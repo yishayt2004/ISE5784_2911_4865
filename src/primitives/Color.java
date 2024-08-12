@@ -113,7 +113,7 @@ public class Color {
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
-      return o instanceof Color other && Math.abs(rgb.d1 - other.rgb.d1 ) < 10 && Math.abs(rgb.d2 - other.rgb.d2 ) < 10 && Math.abs(rgb.d3 - other.rgb.d3 ) < 10;
+      return o instanceof Color other && Math.abs(rgb.d1 - other.rgb.d1 ) < 20 && Math.abs(rgb.d2 - other.rgb.d2 ) < 20 && Math.abs(rgb.d3 - other.rgb.d3 ) < 20;
    }
    @Override
    public String toString() { return "rgb:" + rgb; }
